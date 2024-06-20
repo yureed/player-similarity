@@ -57,13 +57,13 @@ templates = {
     ],
     'Box-to-Box Midfielder (MF)': [
         'Goals', 'Assists', 'Passes Completed', 'Passes Attempted', 
-        'Key Passes', 'Succ Drb', 'Tackles Won', 'Interceptions', 
+        'Key Passes', 'Succ Drb', 'Tackles Won', 'Int', 
         'Touches', 'Prog Passes', 'Prog Carries', 'Carries To Fina lThird'
     ],
     'Deep-Lying Playmaker (MF)': [
         'Passes Completed', 'Passes Attempted', 'Key Passes', 
         'Touches', 'Prog Passes', 'Switches', 'Passes into Penalty Area', 
-        'Succ Drb', 'Interceptions', 'Tackles Won'
+        'Succ Drb', 'Int', 'Tackles Won'
     ],
     'Advanced Playmaker (MF)': [
         'Assists', 'Key Passes', 'Passes Completed', 'Passes Attempted', 
@@ -71,7 +71,7 @@ templates = {
         'Prog Carries', 'Carries To Fina lThird'
     ],
     'Defensive Midfielder (MF)': [
-        'Tackles Won', 'Interceptions', 'Passes Completed', 'Passes Attempted', 
+        'Tackles Won', 'Int', 'Passes Completed', 'Passes Attempted', 
         'Touches', 'Blocks', 'Clearances', 'Recoveries', 'Prog Passes', 
         'Prog Carries'
     ],
@@ -82,32 +82,32 @@ templates = {
     ],
     'Wing-Back (DF)': [
         'Assists', 'Crosses', 'Succ Drb', 'Touches', 'Tackles Won', 
-        'Interceptions', 'Clearances', 'Passes Completed', 
+        'Int', 'Clearances', 'Passes Completed', 
         'Passes Attempted', 'Key Passes', 'Crosses into Penalty Area', 
         'Prog Passes'
     ],
     'Inverted Full-Back (DF)': [
         'Passes Completed', 'Passes Attempted', 'Key Passes', 
-        'Succ Drb', 'Touches', 'Tackles Won', 'Interceptions', 
+        'Succ Drb', 'Touches', 'Tackles Won', 'Int', 
         'Prog Passes', 'Switches'
     ],
     'Ball-Playing Defender (DF)': [
         'Passes Completed', 'Passes Attempted', 'Key Passes', 
-        'Succ Drb', 'Touches', 'Tackles Won', 'Interceptions', 
+        'Succ Drb', 'Touches', 'Tackles Won', 'Int', 
         'Clearances', 'Blocks', 'Recoveries', 'Prog Passes'
     ],
     'No-Nonsense Centre-Back (DF)': [
-        'Tackles Won', 'Interceptions', 'Clearances', 'Blocks', 
+        'Tackles Won', 'Int', 'Clearances', 'Blocks', 
         'Recoveries', 'AerialWins', 'AerialLoss', 'Passes Completed'
     ],
     'Libero (DF)': [
-        'Tackles Won', 'Interceptions', 'Passes Completed', 'Passes Attempted', 
+        'Tackles Won', 'Int', 'Passes Completed', 'Passes Attempted', 
         'Key Passes', 'Succ Drb', 'Touches', 'Prog Passes', 'Clearances', 
         'Blocks', 'Recoveries'
     ],
     'Segundo Volante (MF)': [
         'Goals', 'Assists', 'Passes Completed', 'Passes Attempted', 
-        'Key Passes', 'Succ Drb', 'Touches', 'Tackles Won', 'Interceptions', 
+        'Key Passes', 'Succ Drb', 'Touches', 'Tackles Won', 'Int', 
         'Prog Passes', 'Prog Carries'
     ],
     'Mezzala (MF)': [
