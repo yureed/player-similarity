@@ -7,7 +7,9 @@ import ftfy
 from mplsoccer import Radar, grid
 from mplsoccer.utils import FontManager
 
+
 dataf = pd.read_csv('Final FBRef 2023-2024.csv')
+
 
 def fix_encoding(text):
     return ftfy.fix_text(text)
@@ -20,6 +22,7 @@ dataf = dataf[~dataf['Pos'].str.contains('GK')]
 
 
 dataf['90s'] = dataf['Min'] / 90
+
 
 all_columns = [col for col in dataf.columns if col not in ['Player', 'Nation', 'Pos', 'Squad', 'Comp', 'Age', 'Born', 'MP', 'Starts', 'Min']]
 
@@ -57,7 +60,7 @@ templates = {
     'Box-to-Box Midfielder (MF)': [
         'Goals', 'Assists', 'Passes Completed', 'Passes Attempted', 
         'Key Passes', 'Succ Drb', 'Tackles Won', 'Int', 
-        'Touches', 'Prog Passes', 'Prog Carries', 'Carries To Fina lThird'
+        'Touches', 'Prog Passes', 'Prog Carries', 'Carries To Final Third'
     ],
     'Deep-Lying Playmaker (MF)': [
         'Passes Completed', 'Passes Attempted', 'Key Passes', 
@@ -67,7 +70,7 @@ templates = {
     'Advanced Playmaker (MF)': [
         'Assists', 'Key Passes', 'Passes Completed', 'Passes Attempted', 
         'Succ Drb', 'Touches', 'Prog Passes', 'Passes into Penalty Area', 
-        'Prog Carries', 'Carries To Fina lThird'
+        'Prog Carries', 'Carries To Final Third'
     ],
     'Defensive Midfielder (MF)': [
         'Tackles Won', 'Int', 'Passes Completed', 'Passes Attempted', 
@@ -77,7 +80,7 @@ templates = {
     'Roaming Playmaker (MF)': [
         'Assists', 'Key Passes', 'Passes Completed', 'Passes Attempted', 
         'Succ Drb', 'Touches', 'Prog Passes', 'Prog Carries', 
-        'Carries To Fina lThird', 'Carries To Pen Area'
+        'Carries To Final Third', 'Carries To Pen Area'
     ],
     'Wing-Back (DF)': [
         'Assists', 'Crosses', 'Succ Drb', 'Touches', 'Tackles Won', 
@@ -112,7 +115,7 @@ templates = {
     'Mezzala (MF)': [
         'Assists', 'Goals', 'Key Passes', 'Passes Completed', 
         'Passes Attempted', 'Succ Drb', 'Touches', 'Prog Passes', 
-        'Prog Carries', 'Carries To Fina lThird'
+        'Prog Carries', 'Carries To Final Third'
     ],
     'False Nine (FW)': [
         'Assists', 'Goals', 'Key Passes', 'Passes Completed', 
@@ -123,27 +126,29 @@ templates = {
 
 
 for column in all_columns:
-    if column != '90s':  # Ensure '90s' column is not normalized
+    if column != '90s': 
         dataf[column] = dataf[column] / dataf['90s']
 
-def find_similar_players(player_name, player_club, positions, min_90s, selected_columns, dataf):
-    
+
+def find_similar_players(player_name, player_club, positions, min_90s, min_age, max_age, selected_columns, dataf):
     if not ((dataf['Player'] == player_name) & (dataf['Squad'] == player_club)).any():
         return None, None
     
-  
+
     player_data = dataf[(dataf['Player'] == player_name) & (dataf['Squad'] == player_club)][selected_columns]
     
-    
+
     df = dataf[dataf['Pos'].apply(lambda x: any(pos in x for pos in positions)) & 
-               (dataf['90s'] >= min_90s) & 
+               (dataf['90s'] >= min_90s) &
+               (dataf['Age'] >= min_age) &
+               (dataf['Age'] <= max_age) &
                ~((dataf['Player'] == player_name) & (dataf['Squad'] == player_club))]
     
-  
+
     if df.empty:
         return None, None
     
-   
+
     df = df.dropna(subset=selected_columns)
     
 
@@ -151,17 +156,16 @@ def find_similar_players(player_name, player_club, positions, min_90s, selected_
     metrics_data_scaled = scaler.fit_transform(df[selected_columns])
     player_data_scaled = scaler.transform(player_data)
     
-    
+
     cosine_sim_matrix = cosine_similarity(metrics_data_scaled, player_data_scaled)
     
-   
+  
     similarity_scores = cosine_sim_matrix.flatten()
     
     
     similar_players_indices = np.argsort(similarity_scores)[::-1]
     
     return df, similar_players_indices, similarity_scores
-
 
 st.title('Player Similarity Finder')
 st.write("""
@@ -182,7 +186,6 @@ This utilizes **cosine similarity** and **only works for the selected columns**.
 player_options = [f"{row['Player']} ({row['Squad']})" for idx, row in dataf.iterrows()]
 selected_player = st.selectbox('Select Player', player_options)
 
-
 player_name, player_club = selected_player.split(' (')
 player_club = player_club[:-1]  # Remove trailing ')'
 
@@ -190,15 +193,15 @@ player_club = player_club[:-1]  # Remove trailing ')'
 positions = ['DF', 'MF', 'FW']
 selected_positions = st.multiselect('Select Positions', positions, default=positions)
 
-
 min_90s_value = int(dataf['90s'].min())
 max_90s_value = int(dataf['90s'].max())
 min_90s = st.slider('Minimum 90s played', min_value=min_90s_value, max_value=max_90s_value, value=min_90s_value)
 
-# Age filter with dynamic min and max values
+
 min_age_value = int(dataf['Age'].min())
 max_age_value = int(dataf['Age'].max())
 min_age, max_age = st.slider('Age Range', min_value=min_age_value, max_value=max_age_value, value=(min_age_value, max_age_value))
+
 
 template_options = list(templates.keys())
 selected_template = st.selectbox('Select Template', template_options)
@@ -209,9 +212,9 @@ selected_columns = templates[selected_template]
 
 selected_columns = st.multiselect('Select Columns', all_columns, default=selected_columns)
 
-
+# Find similar players
 if st.button('Find Similar Players'):
-    df, similar_players_indices, similarity_scores = find_similar_players(player_name, player_club, selected_positions, min_90s, selected_columns, dataf)
+    df, similar_players_indices, similarity_scores = find_similar_players(player_name, player_club, selected_positions, min_90s, min_age, max_age, selected_columns, dataf)
 
     if similar_players_indices is not None:
         num_similar_players = min(10, len(similar_players_indices))  
@@ -225,26 +228,24 @@ if st.button('Find Similar Players'):
             similar_players.append(f"{similar_player_name} ({similar_player_club})")
             st.write(f"{i+1}. {similar_player_name} ({similar_player_club}) (Similarity Score: {similarity_score:.3f})")
         
-       
+      
         most_similar_player_name = df.iloc[similar_players_indices[0]]['Player']
         most_similar_player_club = df.iloc[similar_players_indices[0]]['Squad']
         most_similar_player_metrics = df[(df['Player'] == most_similar_player_name) & (df['Squad'] == most_similar_player_club)].iloc[0][selected_columns]
         given_player_metrics = dataf[(dataf['Player'] == player_name) & (dataf['Squad'] == player_club)].iloc[0][selected_columns]
 
-
         params = selected_columns
 
         player_data_full = dataf[(dataf['Player'] == player_name) & (dataf['Squad'] == player_club)]
 
-    
         df_with_player = pd.concat([df, player_data_full])
 
-    
+        # Lower and upper boundaries for the statistics
         low = [df_with_player[col].min() for col in selected_columns]
         high = [df_with_player[col].max() for col in selected_columns]
 
+        # Create the radar chart
         radar = Radar(params, low, high,
-                     
                       round_int=[False]*len(params),
                       num_rings=4,  
                       ring_width=1, center_circle_radius=1)
@@ -260,14 +261,14 @@ if st.button('Find Similar Players'):
         rubik_regular = FontManager(URL3)
         URL4 = 'https://raw.githubusercontent.com/googlefonts/roboto/main/src/hinted/Roboto-Thin.ttf'
         robotto_thin = FontManager(URL4)
-        URL5 = ('https://raw.githubusercontent.com/google/fonts/main/apache/robotoslab/'
+        URL5 = ('https://raw.githubusercontent.com/googlefonts/robotoslab/main/fonts/'
                 'RobotoSlab%5Bwght%5D.ttf')
         robotto_bold = FontManager(URL5)
 
         fig, axs = grid(figheight=14, grid_height=0.915, title_height=0.06, endnote_height=0.025,
                         title_space=0, endnote_space=0, grid_key='radar', axis=False)
 
-     
+
         radar.setup_axis(ax=axs['radar'], facecolor='black')  
         rings_inner = radar.draw_circles(ax=axs['radar'], facecolor='orange', edgecolor='black')
         radar_output = radar.draw_radar_compare(given_player_metrics, most_similar_player_metrics, ax=axs['radar'],
@@ -281,7 +282,6 @@ if st.button('Find Similar Players'):
         axs['radar'].scatter(vertices2[:, 0], vertices2[:, 1],
                              c='#d80499', edgecolors='#6d6c6d', marker='o', s=150, zorder=2)
 
-       
         title1_text = axs['title'].text(0.01, 0.65, player_name, fontsize=25, color='#01c49d',
                                         fontproperties=robotto_bold.prop, ha='left', va='center')
         title2_text = axs['title'].text(0.01, 0.25, player_club, fontsize=20,
@@ -298,4 +298,3 @@ if st.button('Find Similar Players'):
         st.pyplot(fig)
     else:
         st.write(f"No players found meeting the criteria.")
-
