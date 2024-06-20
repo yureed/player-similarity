@@ -18,7 +18,7 @@ dataf['Squad'] = dataf['Squad'].apply(fix_encoding)
 
 # Create the '90s' column by dividing 'Min' by 90
 dataf['90s'] = dataf['Min'] / 90
-
+st.write(dataf["90s"])
 # List of all columns except the excluded ones
 all_columns = [col for col in dataf.columns if col not in ['Player', 'Nation', 'Pos', 'Squad', 'Comp', 'Age', 'Born', 'MP', 'Starts', 'Min']]
 
