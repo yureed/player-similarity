@@ -6,7 +6,7 @@ from sklearn.preprocessing import StandardScaler
 import ftfy
 
 # Read the CSV file
-dataf = pd.read_csv('/mnt/data/Final FBRef 2023-2024.csv')
+dataf = pd.read_csv('Final FBRef 2023-2024.csv')
 
 # Function to fix text encoding issues
 def fix_encoding(text):
