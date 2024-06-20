@@ -52,7 +52,7 @@ for column in all_columns:
         dataf[column] = dataf[column] / dataf['90s']
         
 # Function to find similar players
-def find_similar_players(player_name, player_club, position, min_90s, selected_columns, dataf):
+def find_similar_players(player_name, player_club, positions, min_90s, selected_columns, dataf):
     # Check if the player exists in the data
     if not ((dataf['Player'] == player_name) & (dataf['Squad'] == player_club)).any():
         return None, None
@@ -60,8 +60,7 @@ def find_similar_players(player_name, player_club, position, min_90s, selected_c
     # Extract the data for the given player
     player_data = dataf[(dataf['Player'] == player_name) & (dataf['Squad'] == player_club)][selected_columns]
     
-    # Filter players based on position, minutes played, and age criteria, excluding the given player
-    df = dataf[(dataf['Pos'].str.contains(position)) & 
+    df = dataf[dataf['Pos'].apply(lambda x: any(pos in x for pos in positions)) & 
                (dataf['90s'] >= min_90s) & 
                ~((dataf['Player'] == player_name) & (dataf['Squad'] == player_club))]
     
@@ -95,9 +94,9 @@ selected_player = st.selectbox('Select Player', player_options)
 player_name, player_club = selected_player.split(' (')
 player_club = player_club[:-1]  # Remove trailing ')'
 
-# Position selection
+# Position selection (allow multiple positions)
 positions = ['DF', 'MF', 'FW']
-selected_position = st.selectbox('Select Position', positions)
+selected_positions = st.multiselect('Select Positions', positions, default=positions)
 
 # 90s filter with dynamic min and max values
 min_90s_value = int(dataf['90s'].min())
