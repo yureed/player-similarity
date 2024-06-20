@@ -24,7 +24,7 @@ dataf = dataf[~dataf['Pos'].str.contains('GK')]
 dataf['90s'] = dataf['Min'] / 90
 
 
-all_columns = [col for col in dataf.columns if col not in ['Player', 'Nation', 'Pos', 'Squad', 'Comp', 'Age', 'Born', 'MP', 'Starts', 'Min']]
+all_columns = [col for col in dataf.columns if col not in ['Player', 'Nation', 'Pos', 'Squad', 'Comp', 'Born', 'MP', 'Starts', 'Min']]
 
 
 templates = {
@@ -126,7 +126,7 @@ templates = {
 
 
 for column in all_columns:
-    if column != '90s': 
+    if column != '90s' and column != 'Age': 
         dataf[column] = dataf[column] / dataf['90s']
 
 
