@@ -18,7 +18,7 @@ dataf['Squad'] = dataf['Squad'].apply(fix_encoding)
 
 # Create the '90s' column by dividing 'Min' by 90
 dataf['90s'] = dataf['Min'] / 90
-st.write(dataf["90s"])
+
 # List of all columns except the excluded ones
 all_columns = [col for col in dataf.columns if col not in ['Player', 'Nation', 'Pos', 'Squad', 'Comp', 'Age', 'Born', 'MP', 'Starts', 'Min']]
 
@@ -35,10 +35,10 @@ templates = {
     ]
 }
 
-# Normalize all columns by dividing by '90s'
 for column in all_columns:
-    dataf[column] = dataf[column] / dataf['90s']
-
+    if column != '90s':  # Ensure '90s' column is not normalized
+        dataf[column] = dataf[column] / dataf['90s']
+        
 # Function to find similar players
 def find_similar_players(player_name, player_club, position, min_90s, selected_columns, dataf):
     # Check if the player exists in the data
@@ -86,7 +86,7 @@ player_club = player_club[:-1]  # Remove trailing ')'
 # Position selection
 positions = ['DF', 'MF', 'FW']
 selected_position = st.selectbox('Select Position', positions)
-st.write(dataf["90s"])
+
 # 90s filter with dynamic min and max values
 min_90s_value = int(dataf['90s'].min())
 max_90s_value = int(dataf['90s'].max())
