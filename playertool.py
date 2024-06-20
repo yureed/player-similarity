@@ -91,7 +91,7 @@ positions = ['GK', 'DF', 'MF', 'FW']
 selected_position = st.selectbox('Select Position', positions)
 
 # 90s filter
-min_90s = st.slider('Minimum 90s played', 1, int(dataf['90s'].max()), 5)
+min_90s = st.slider('Minimum 90s played', 1, int(dataf['90s'].min()), int(dataf['90s'].max()))
 
 # Template selection
 template_options = list(templates.keys())
