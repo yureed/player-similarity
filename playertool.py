@@ -119,7 +119,7 @@ if st.button('Find Similar Players'):
     else:
         st.write(f"Player {player_name} from {player_club} not found in the dataset.")
 
-"""
+'''
 # Extract metrics for the most similar player and the given player
 most_similar_player_name = df.iloc[similar_players_indices[0]]['Player']
 most_similar_player_club = df.iloc[similar_players_indices[0]]['Squad']
@@ -193,4 +193,4 @@ title4_text = axs['title'].text(0.99, 0.25, most_similar_player_club, fontsize=2
 fig.set_facecolor('#121212')
 
 plt.show()
-"""
+'''
