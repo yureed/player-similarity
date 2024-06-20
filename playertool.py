@@ -32,9 +32,6 @@ templates = {
     ],
     'Defender (DF)': [
         'Tackle', 'Int', 'Clr', 'Blocks', 'AerialWins', 'Passes Completed', 'Passes Attempted', 'Succ Drb', 'Prog Pass Dist', 'Touches'
-    ],
-    'Goalkeeper (GK)': [
-        'Saves', 'Save%', 'Clean Sheets', 'Goals Conceded', 'PSxG', 'Passes Attempted', 'Passes Completed', 'Passes Completed%', 'Launches', 'Sweeper Actions'
     ]
 }
 
@@ -87,7 +84,7 @@ player_name, player_club = selected_player.split(' (')
 player_club = player_club[:-1]  # Remove trailing ')'
 
 # Position selection
-positions = ['GK', 'DF', 'MF', 'FW']
+positions = ['DF', 'MF', 'FW']
 selected_position = st.selectbox('Select Position', positions)
 
 
