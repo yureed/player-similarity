@@ -1,10 +1,10 @@
-# Top 5 Leagues Match Reports Dashboard
+# Player Similarity Tool Dashboard
 
-**Welcome to the Top 5 Leagues Match Reports Dashboard repository!**
+**Welcome to the Player Similarity Tool Dashboard repository!**
 
 ## Overview
 
-This repository contains the code and resources for the **Top 5 Leagues Match Reports Dashboard**, a tool designed to provide in-depth analysis of matches from Europe's top 5 leagues. The dashboard features detailed match data, player performances, passing accuracy, and progression metrics to enhance your football analysis experience.
+This repository contains the code and resources for the **Player Similarity Tool Dashboard**
 
 ## Features
 
@@ -12,7 +12,7 @@ This repository contains the code and resources for the **Top 5 Leagues Match Re
 
 ## Live Dashboard
 
-Check out the live dashboard here: [Top 5 Leagues Match Reports Dashboard](https://euros-analysis-2024.streamlit.app/)
+Check out the live dashboard here: [Player Similarity Tool](https://player-similarity-tool.streamlit.app)
 
 ## Connect with Me
 
