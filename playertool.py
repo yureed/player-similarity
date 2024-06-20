@@ -171,7 +171,7 @@ if st.button('Find Similar Players'):
             serif_regular = FontManager(URL1)
             URL2 = ('https://raw.githubusercontent.com/googlefonts/SourceSerifProGFVersion/main/fonts/'
                     'SourceSerifPro-ExtraLight.ttf')
-                        serif_extra_light = FontManager(URL2)
+            serif_extra_light = FontManager(URL2)
             URL3 = ('https://raw.githubusercontent.com/google/fonts/main/ofl/rubikmonoone/'
                     'RubikMonoOne-Regular.ttf')
             rubik_regular = FontManager(URL3)
