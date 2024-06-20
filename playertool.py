@@ -36,38 +36,38 @@ templates = {
         'Goals', 'Assists', 'Shots', 'Shots on Target', 
         'Goals per Shot', 'Goals per Shot on Target', 'Penalties', 
         'xG', 'npxG', 'Passes Completed', 'Passes Attempted', 
-        'Key Passes', 'Dribbles', 'Touches', 'Att Pen Touch'
+        'Key Passes', 'Succ Dribb', 'Touches', 'Att Pen Touch'
     ],
     'Advanced Forward (FW)': [
         'Goals', 'Shots', 'Shots on Target', 'Goals per Shot', 
         'Goals per Shot on Target', 'Penalties', 'xG', 
-        'npxG', 'G-xG', 'npG-xG', 'Dribbles', 'Touches', 
+        'npxG', 'G-xG', 'npG-xG', 'Succ Dribb', 'Touches', 
         'Att Pen Touch', 'Prog Passes Rec'
     ],
     'Inside Forward (FW)': [
         'Goals', 'Shots', 'Shots on Target', 'Goals per Shot', 
         'Goals per Shot on Target', 'xG', 'npxG', 'Assists', 
-        'Dribbles', 'Touches', 'Att Pen Touch', 'Prog Passes Rec', 
+        'Succ Dribb', 'Touches', 'Att Pen Touch', 'Prog Passes Rec', 
         'Key Passes'
     ],
     'Winger (FW)': [
-        'Assists', 'Crosses', 'Dribbles', 'Touches', 'Att Pen Touch', 
+        'Assists', 'Crosses', 'Succ Dribb', 'Touches', 'Att Pen Touch', 
         'Key Passes', 'Passes Completed', 'Passes Attempted', 
         'Crosses into Penalty Area', 'Prog Passes', 'Passes into Penalty Area'
     ],
     'Box-to-Box Midfielder (MF)': [
         'Goals', 'Assists', 'Passes Completed', 'Passes Attempted', 
-        'Key Passes', 'Dribbles', 'Tackles', 'Interceptions', 
+        'Key Passes', 'Succ Dribb', 'Tackles', 'Interceptions', 
         'Touches', 'Prog Passes', 'Prog Carries', 'Carries To Final Third'
     ],
     'Deep-Lying Playmaker (MF)': [
         'Passes Completed', 'Passes Attempted', 'Key Passes', 
         'Touches', 'Prog Passes', 'Switches', 'Passes into Penalty Area', 
-        'Dribbles', 'Interceptions', 'Tackles'
+        'Succ Dribb', 'Interceptions', 'Tackles'
     ],
     'Advanced Playmaker (MF)': [
         'Assists', 'Key Passes', 'Passes Completed', 'Passes Attempted', 
-        'Dribbles', 'Touches', 'Prog Passes', 'Passes into Penalty Area', 
+        'Succ Dribb', 'Touches', 'Prog Passes', 'Passes into Penalty Area', 
         'Prog Carries', 'Carries To Final Third'
     ],
     'Defensive Midfielder (MF)': [
@@ -77,23 +77,23 @@ templates = {
     ],
     'Roaming Playmaker (MF)': [
         'Assists', 'Key Passes', 'Passes Completed', 'Passes Attempted', 
-        'Dribbles', 'Touches', 'Prog Passes', 'Prog Carries', 
+        'Succ Dribb', 'Touches', 'Prog Passes', 'Prog Carries', 
         'Carries To Final Third', 'Carries To Pen Area'
     ],
     'Wing-Back (DF)': [
-        'Assists', 'Crosses', 'Dribbles', 'Touches', 'Tackles', 
+        'Assists', 'Crosses', 'Succ Dribb', 'Touches', 'Tackles', 
         'Interceptions', 'Clearances', 'Passes Completed', 
         'Passes Attempted', 'Key Passes', 'Crosses into Penalty Area', 
         'Prog Passes'
     ],
     'Inverted Full-Back (DF)': [
         'Passes Completed', 'Passes Attempted', 'Key Passes', 
-        'Dribbles', 'Touches', 'Tackles', 'Interceptions', 
+        'Succ Dribb', 'Touches', 'Tackles', 'Interceptions', 
         'Prog Passes', 'Switches'
     ],
     'Ball-Playing Defender (DF)': [
         'Passes Completed', 'Passes Attempted', 'Key Passes', 
-        'Dribbles', 'Touches', 'Tackles', 'Interceptions', 
+        'Succ Dribb', 'Touches', 'Tackles', 'Interceptions', 
         'Clearances', 'Blocks', 'Recoveries', 'Prog Passes'
     ],
     'No-Nonsense Centre-Back (DF)': [
@@ -102,22 +102,22 @@ templates = {
     ],
     'Libero (DF)': [
         'Tackles', 'Interceptions', 'Passes Completed', 'Passes Attempted', 
-        'Key Passes', 'Dribbles', 'Touches', 'Prog Passes', 'Clearances', 
+        'Key Passes', 'Succ Dribb', 'Touches', 'Prog Passes', 'Clearances', 
         'Blocks', 'Recoveries'
     ],
     'Segundo Volante (MF)': [
         'Goals', 'Assists', 'Passes Completed', 'Passes Attempted', 
-        'Key Passes', 'Dribbles', 'Touches', 'Tackles', 'Interceptions', 
+        'Key Passes', 'Succ Dribb', 'Touches', 'Tackles', 'Interceptions', 
         'Prog Passes', 'Prog Carries'
     ],
     'Mezzala (MF)': [
         'Assists', 'Goals', 'Key Passes', 'Passes Completed', 
-        'Passes Attempted', 'Dribbles', 'Touches', 'Prog Passes', 
+        'Passes Attempted', 'Succ Dribb', 'Touches', 'Prog Passes', 
         'Prog Carries', 'Carries To Final Third'
     ],
     'False Nine (FW)': [
         'Assists', 'Goals', 'Key Passes', 'Passes Completed', 
-        'Passes Attempted', 'Dribbles', 'Touches', 'Prog Passes', 
+        'Passes Attempted', 'Succ Dribb', 'Touches', 'Prog Passes', 
         'Prog Carries', 'Carries To Pen Area', 'Prog Passes Rec'
     ]
 }
