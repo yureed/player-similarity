@@ -166,8 +166,19 @@ def find_similar_players(player_name, player_club, positions, min_90s, selected_
 
 # Streamlit App
 st.title('Player Similarity Finder')
-st.write("First of all, I am not entirely saying to rely on this similarity tool or any data analysis as it is imperative to consult videos and other sources. This utilizes cosine similarity and only works for the selected columns. You can choose any template (Yes, as you can see these are Football Manager Roles to get started.) I have added some columns, they may not entirely represent the role but they are something for you to get started with. You can add more columns for yourself if you want or remove any. For now, only the most similar player will have his radar shown.")
-st.write("Data is from FBRef and credit to Ben Griffis, whose code I used to get the FBRef Data.")
+st.write("""
+## Important Notice
+
+**First of all, I am not entirely saying to rely on this similarity tool or any data analysis as it is imperative to consult videos and other sources.**
+
+This utilizes **cosine similarity** and only works for the selected columns. You can choose any template (**Yes, as you can see these are Football Manager Roles to get started.**) I have added some columns, they may not entirely represent the role but they are something for you to get started with. **You can add more columns for yourself if you want or remove any.**
+
+**For now, only the most similar player will have his radar shown.**
+
+---
+
+**Data is from FBRef and credit to Ben Griffis, whose code I used to get the FBRef Data.**
+""")
 # Player selection
 player_options = [f"{row['Player']} ({row['Squad']})" for idx, row in dataf.iterrows()]
 selected_player = st.selectbox('Select Player', player_options)
