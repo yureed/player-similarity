@@ -126,7 +126,7 @@ templates = {
 
 
 for column in all_columns:
-    if column != '90s' or column != 'Age': 
+    if column != '90s' and column != 'Age': 
         dataf[column] = dataf[column] / dataf['90s']
 
 
@@ -197,7 +197,8 @@ min_90s_value = int(dataf['90s'].min())
 max_90s_value = int(dataf['90s'].max())
 min_90s = st.slider('Minimum 90s played', min_value=min_90s_value, max_value=max_90s_value, value=min_90s_value)
 
-
+age_zero_df = dataf[dataf['Age'] == 0]
+st.write(age_zero_df)
 min_age_value = int(dataf['Age'].min())
 max_age_value = int(dataf['Age'].max())
 min_age, max_age = st.slider('Age Range', min_value=min_age_value, max_value=max_age_value, value=(min_age_value, max_age_value))
