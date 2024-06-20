@@ -58,7 +58,7 @@ templates = {
     'Box-to-Box Midfielder (MF)': [
         'Goals', 'Assists', 'Passes Completed', 'Passes Attempted', 
         'Key Passes', 'Succ Drb', 'Tackles', 'Interceptions', 
-        'Touches', 'Prog Passes', 'Prog Carries', 'Carries To Final Third'
+        'Touches', 'Prog Passes', 'Prog Carries', 'Carries To Fina lThird'
     ],
     'Deep-Lying Playmaker (MF)': [
         'Passes Completed', 'Passes Attempted', 'Key Passes', 
@@ -68,7 +68,7 @@ templates = {
     'Advanced Playmaker (MF)': [
         'Assists', 'Key Passes', 'Passes Completed', 'Passes Attempted', 
         'Succ Drb', 'Touches', 'Prog Passes', 'Passes into Penalty Area', 
-        'Prog Carries', 'Carries To Final Third'
+        'Prog Carries', 'Carries To Fina lThird'
     ],
     'Defensive Midfielder (MF)': [
         'Tackles', 'Interceptions', 'Passes Completed', 'Passes Attempted', 
@@ -78,7 +78,7 @@ templates = {
     'Roaming Playmaker (MF)': [
         'Assists', 'Key Passes', 'Passes Completed', 'Passes Attempted', 
         'Succ Drb', 'Touches', 'Prog Passes', 'Prog Carries', 
-        'Carries To Final Third', 'Carries To Pen Area'
+        'Carries To Fina lThird', 'Carries To Pen Area'
     ],
     'Wing-Back (DF)': [
         'Assists', 'Crosses', 'Succ Drb', 'Touches', 'Tackles', 
@@ -113,7 +113,7 @@ templates = {
     'Mezzala (MF)': [
         'Assists', 'Goals', 'Key Passes', 'Passes Completed', 
         'Passes Attempted', 'Succ Drb', 'Touches', 'Prog Passes', 
-        'Prog Carries', 'Carries To Final Third'
+        'Prog Carries', 'Carries To Fina lThird'
     ],
     'False Nine (FW)': [
         'Assists', 'Goals', 'Key Passes', 'Passes Completed', 
