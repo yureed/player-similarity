@@ -167,7 +167,7 @@ st.write("""
 
 **First of all, I am not entirely saying to rely on this similarity tool or any data analysis as it is imperative to consult videos and other sources.**
 
-This utilizes **cosine similarity** and **only works for the selected columns**. You can choose any template (Yes, as you can see these are Football Manager Roles to get started.) I have added some columns, they may not entirely represent the role but they are something for you to get started with.  **You can add more columns for yourself if you want or remove any.**I would not recommend adding too many columns as the Radar might get glitched out. However, the similarity tool will work.
+This utilizes **cosine similarity** and **only works for the selected columns**. You can choose any template (Yes, as you can see these are Football Manager Roles to get started.) I have added some columns, they may not entirely represent the role but they are something for you to get started with.  **You can add more columns for yourself if you want or remove any.** I would not recommend adding too many columns as the Radar might get glitched out. However, the similarity tool will work.
 
 **For now, only the most similar player will have his radar shown.**
 
