@@ -19,7 +19,7 @@ dataf['Player'] = dataf['Player'].apply(fix_encoding)
 dataf['Squad'] = dataf['Squad'].apply(fix_encoding)
 
 dataf = dataf[~dataf['Pos'].str.contains('GK')]
-
+dataf = dataf[dataf['Age'] != 0]
 
 dataf['90s'] = dataf['Min'] / 90
 
@@ -197,8 +197,7 @@ min_90s_value = int(dataf['90s'].min())
 max_90s_value = int(dataf['90s'].max())
 min_90s = st.slider('Minimum 90s played', min_value=min_90s_value, max_value=max_90s_value, value=min_90s_value)
 
-age_zero_df = dataf[dataf['Age'] == 0]
-st.write(age_zero_df)
+
 min_age_value = int(dataf['Age'].min())
 max_age_value = int(dataf['Age'].max())
 min_age, max_age = st.slider('Age Range', min_value=min_age_value, max_value=max_age_value, value=(min_age_value, max_age_value))
