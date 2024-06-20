@@ -27,61 +27,100 @@ all_columns = [col for col in dataf.columns if col not in ['Player', 'Nation', '
 # Templates for different positions
 templates = {
     'Poacher (FW)': [
-        'Goals', 'Shots', 'Shots on Target', 'xG', 'Penalties', 'Succ Drb', 'Att Pen Touch'
+        'Goals', 'Shots', 'Shots on Target', 'Goals per Shot', 
+        'Goals per Shot on Target', 'Penalties', 'xG', 
+        'npxG', 'G-xG', 'npG-xG', 'Touches', 'Att Pen Touch', 
+        'Prog Passes Rec', 'Drb Tkl%'
     ],
     'Complete Forward (FW)': [
-        'Goals', 'Shots', 'Shots on Target', 'Assists', 'Key Passes', 'AerialWins', 'Drb Succ%', 'Prog Carries', 'Passes Completed'
+        'Goals', 'Assists', 'Shots', 'Shots on Target', 
+        'Goals per Shot', 'Goals per Shot on Target', 'Penalties', 
+        'xG', 'npxG', 'Passes Completed', 'Passes Attempted', 
+        'Key Passes', 'Dribbles', 'Touches', 'Att Pen Touch'
     ],
     'Advanced Forward (FW)': [
-        'Goals', 'Shots', 'Shots on Target', 'xG', 'Assists', 'Key Passes', 'Drb Succ%', 'Att Pen Touch', 'Prog Carries'
+        'Goals', 'Shots', 'Shots on Target', 'Goals per Shot', 
+        'Goals per Shot on Target', 'Penalties', 'xG', 
+        'npxG', 'G-xG', 'npG-xG', 'Dribbles', 'Touches', 
+        'Att Pen Touch', 'Prog Passes Rec'
     ],
     'Inside Forward (FW)': [
-        'Goals', 'Shots', 'Assists', 'Key Passes', 'Drb Succ%', 'Crosses', 'Prog Carries', 'Carries To Pen Area'
+        'Goals', 'Shots', 'Shots on Target', 'Goals per Shot', 
+        'Goals per Shot on Target', 'xG', 'npxG', 'Assists', 
+        'Dribbles', 'Touches', 'Att Pen Touch', 'Prog Passes Rec', 
+        'Key Passes'
     ],
     'Winger (FW)': [
-        'Goals', 'Assists', 'Crosses', 'Key Passes', 'Drb Succ%', 'Shots', 'Succ Drb', 'Prog Carries'
+        'Assists', 'Crosses', 'Dribbles', 'Touches', 'Att Pen Touch', 
+        'Key Passes', 'Passes Completed', 'Passes Attempted', 
+        'Crosses into Penalty Area', 'Prog Passes', 'Passes into Penalty Area'
     ],
     'Box-to-Box Midfielder (MF)': [
-        'Goals', 'Assists', 'Key Passes', 'Tackles Won', 'Int', 'Shots', 'Passes Completed', 'Prog Carries'
+        'Goals', 'Assists', 'Passes Completed', 'Passes Attempted', 
+        'Key Passes', 'Dribbles', 'Tackles', 'Interceptions', 
+        'Touches', 'Prog Passes', 'Prog Carries', 'Carries To Final Third'
     ],
     'Deep-Lying Playmaker (MF)': [
-        'Passes Completed', 'Key Passes', 'Assists', 'Prog Pass Dist', 'Int', 'Tackles Won', 'Recov', 'Prog Carries'
+        'Passes Completed', 'Passes Attempted', 'Key Passes', 
+        'Touches', 'Prog Passes', 'Switches', 'Passes into Penalty Area', 
+        'Dribbles', 'Interceptions', 'Tackles'
     ],
     'Advanced Playmaker (MF)': [
-        'Goals', 'Assists', 'Key Passes', 'Shots', 'Drb Succ%', 'Passes Completed', 'Prog Pass Dist', 'xA'
+        'Assists', 'Key Passes', 'Passes Completed', 'Passes Attempted', 
+        'Dribbles', 'Touches', 'Prog Passes', 'Passes into Penalty Area', 
+        'Prog Carries', 'Carries To Final Third'
     ],
     'Defensive Midfielder (MF)': [
-        'Tackle', 'Int', 'Clr', 'Blocks', 'Passes Completed', 'Passes Attempted', 'Prog Pass Dist', 'Recov', 'AerialWins'
+        'Tackles', 'Interceptions', 'Passes Completed', 'Passes Attempted', 
+        'Touches', 'Blocks', 'Clearances', 'Recoveries', 'Prog Passes', 
+        'Prog Carries'
     ],
     'Roaming Playmaker (MF)': [
-        'Passes Completed', 'Key Passes', 'Assists', 'Tackles Won', 'Int', 'Prog Pass Dist', 'Prog Carries', 'Shots', 'Goals', 'Touches'
+        'Assists', 'Key Passes', 'Passes Completed', 'Passes Attempted', 
+        'Dribbles', 'Touches', 'Prog Passes', 'Prog Carries', 
+        'Carries To Final Third', 'Carries To Pen Area'
     ],
     'Wing-Back (DF)': [
-        'Tackle', 'Int', 'Clr', 'Blocks', 'Crosses', 'Passes Completed', 'Passes Attempted', 'Succ Drb', 'Prog Pass Dist', 'Touches'
+        'Assists', 'Crosses', 'Dribbles', 'Touches', 'Tackles', 
+        'Interceptions', 'Clearances', 'Passes Completed', 
+        'Passes Attempted', 'Key Passes', 'Crosses into Penalty Area', 
+        'Prog Passes'
     ],
     'Inverted Full-Back (DF)': [
-        'Tackle', 'Int', 'Clr', 'Blocks', 'Passes Completed', 'Prog Pass Dist', 'Recov', 'Drb Succ%', 'Touches'
+        'Passes Completed', 'Passes Attempted', 'Key Passes', 
+        'Dribbles', 'Touches', 'Tackles', 'Interceptions', 
+        'Prog Passes', 'Switches'
     ],
     'Ball-Playing Defender (DF)': [
-        'Tackle', 'Int', 'Clr', 'Blocks', 'AerialWins', 'Passes Completed', 'Passes Attempted', 'Prog Pass Dist', 'Recov'
+        'Passes Completed', 'Passes Attempted', 'Key Passes', 
+        'Dribbles', 'Touches', 'Tackles', 'Interceptions', 
+        'Clearances', 'Blocks', 'Recoveries', 'Prog Passes'
     ],
     'No-Nonsense Centre-Back (DF)': [
-        'Tackle', 'Int', 'Clr', 'Blocks', 'AerialWins', 'Passes Attempted', 'Recov', 'Fouls'
+        'Tackles', 'Interceptions', 'Clearances', 'Blocks', 
+        'Recoveries', 'AerialWins', 'AerialLoss', 'Passes Completed'
     ],
     'Libero (DF)': [
-        'Passes Completed', 'Prog Pass Dist', 'Key Passes', 'Tackles Won', 'Int', 'Recov', 'Drb Succ%', 'Goals'
+        'Tackles', 'Interceptions', 'Passes Completed', 'Passes Attempted', 
+        'Key Passes', 'Dribbles', 'Touches', 'Prog Passes', 'Clearances', 
+        'Blocks', 'Recoveries'
     ],
     'Segundo Volante (MF)': [
-        'Goals', 'Assists', 'Key Passes', 'Tackles Won', 'Int', 'Shots', 'Prog Carries', 'Passes Completed'
+        'Goals', 'Assists', 'Passes Completed', 'Passes Attempted', 
+        'Key Passes', 'Dribbles', 'Touches', 'Tackles', 'Interceptions', 
+        'Prog Passes', 'Prog Carries'
     ],
     'Mezzala (MF)': [
-        'Goals', 'Assists', 'Key Passes', 'Shots', 'Drb Succ%', 'Passes Completed', 'Prog Carries', 'xA'
+        'Assists', 'Goals', 'Key Passes', 'Passes Completed', 
+        'Passes Attempted', 'Dribbles', 'Touches', 'Prog Passes', 
+        'Prog Carries', 'Carries To Final Third'
     ],
     'False Nine (FW)': [
-        'Goals', 'Assists', 'Key Passes', 'Shots', 'Drb Succ%', 'Prog Carries', 'Passes Completed', 'xA'
+        'Assists', 'Goals', 'Key Passes', 'Passes Completed', 
+        'Passes Attempted', 'Dribbles', 'Touches', 'Prog Passes', 
+        'Prog Carries', 'Carries To Pen Area', 'Prog Passes Rec'
     ]
 }
-
 
 # Normalize all columns except '90s' by dividing by '90s'
 for column in all_columns:
