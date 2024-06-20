@@ -72,7 +72,7 @@ templates = {
     ],
     'Defensive Midfielder (MF)': [
         'Tackles Won', 'Int', 'Passes Completed', 'Passes Attempted', 
-        'Touches', 'Blocks', 'Clr', 'Recoveries', 'Prog Passes', 
+        'Touches', 'Blocks', 'Clr', 'Recov', 'Prog Passes', 
         'Prog Carries'
     ],
     'Roaming Playmaker (MF)': [
@@ -94,16 +94,16 @@ templates = {
     'Ball-Playing Defender (DF)': [
         'Passes Completed', 'Passes Attempted', 'Key Passes', 
         'Succ Drb', 'Touches', 'Tackles Won', 'Int', 
-        'Clr', 'Blocks', 'Recoveries', 'Prog Passes'
+        'Clr', 'Blocks', 'Recov', 'Prog Passes'
     ],
     'No-Nonsense Centre-Back (DF)': [
         'Tackles Won', 'Int', 'Clr', 'Blocks', 
-        'Recoveries', 'AerialWins', 'AerialLoss', 'Passes Completed'
+        'Recov', 'AerialWins', 'AerialLoss', 'Passes Completed'
     ],
     'Libero (DF)': [
         'Tackles Won', 'Int', 'Passes Completed', 'Passes Attempted', 
         'Key Passes', 'Succ Drb', 'Touches', 'Prog Passes', 'Clr', 
-        'Blocks', 'Recoveries'
+        'Blocks', 'Recov'
     ],
     'Segundo Volante (MF)': [
         'Goals', 'Assists', 'Passes Completed', 'Passes Attempted', 
