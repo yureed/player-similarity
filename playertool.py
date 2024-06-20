@@ -87,8 +87,10 @@ player_club = player_club[:-1]  # Remove trailing ')'
 positions = ['DF', 'MF', 'FW']
 selected_position = st.selectbox('Select Position', positions)
 
-
-min_90s = st.slider('Minimum 90s played', min_value=0, max_value=38, value=0)
+# 90s filter with dynamic min and max values
+min_90s_value = int(dataf['90s'].min())
+max_90s_value = int(dataf['90s'].max())
+min_90s = st.slider('Minimum 90s played', min_value=min_90s_value, max_value=max_90s_value, value=min_90s_value)
 
 # Template selection
 template_options = list(templates.keys())
