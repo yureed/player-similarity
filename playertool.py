@@ -256,7 +256,7 @@ if st.button('Find Similar Players'):
         serif_extra_light = FontManager(URL2)
         URL3 = ('https://raw.githubusercontent.com/google/fonts/main/ofl/rubikmonoone/RubikMonoOne-Regular.ttf')
         rubik_regular = FontManager(URL3)
-        URL4 = 'https://raw.githubusercontent.com/googlefonts/roboto/main/src/hinted/Roboto-Thin.ttf')
+        URL4 = ('https://raw.githubusercontent.com/googlefonts/roboto/main/src/hinted/Roboto-Thin.ttf')
         robotto_thin = FontManager(URL4)
         URL5 = ('https://raw.githubusercontent.com/googlefonts/robotoslab/main/fonts/RobotoSlab%5Bwght%5D.ttf')
         robotto_bold = FontManager(URL5)
