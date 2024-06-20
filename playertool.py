@@ -95,7 +95,7 @@ min_90s_value = int(dataf['90s'].min())
 max_90s_value = int(dataf['90s'].max())
 st.write(min_90s_value)
 st.write(max_90s_value)
-min_90s = st.slider('Minimum 90s played', min_value=min_90s_value, max_value=max_90s_value, value=min_90s_value)
+min_90s = st.slider('Minimum 90s played', min_value=0, max_value=38, value=0)
 
 # Template selection
 template_options = list(templates.keys())
