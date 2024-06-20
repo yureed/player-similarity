@@ -121,14 +121,6 @@ selected_columns = templates[selected_template]
 # Column selection
 selected_columns = st.multiselect('Select Columns', all_columns, default=selected_columns)
 
-# Initialize session state variables
-if 'similar_players' not in st.session_state:
-    st.session_state.similar_players = []
-if 'similar_players_indices' not in st.session_state:
-    st.session_state.similar_players_indices = []
-if 'similarity_scores' not in st.session_state:
-    st.session_state.similarity_scores = []
-
 # Find similar players
 if st.button('Find Similar Players'):
     df, similar_players_indices, similarity_scores = find_similar_players(player_name, player_club, selected_positions, min_90s, selected_columns, dataf)
@@ -145,22 +137,10 @@ if st.button('Find Similar Players'):
             similar_players.append(f"{similar_player_name} ({similar_player_club})")
             st.write(f"{i+1}. {similar_player_name} ({similar_player_club}) (Similarity Score: {similarity_score:.3f})")
         
-        # Store in session state
-        st.session_state.similar_players = similar_players
-        st.session_state.similar_players_indices = similar_players_indices
-        st.session_state.similarity_scores = similarity_scores
-    else:
-        st.write(f"No players found meeting the criteria.")
-
-# Display radar chart selection only if similar players are found
-if st.session_state.similar_players:
-    selected_similar_player = st.selectbox('Select a player for radar chart comparison', st.session_state.similar_players)
-    if selected_similar_player:
-        selected_similar_player_name, selected_similar_player_club = selected_similar_player.split(' (')
-        selected_similar_player_club = selected_similar_player_club[:-1]  # Remove trailing ')'
-
         # Extract metrics for the most similar player and the given player
-        most_similar_player_metrics = df[(df['Player'] == selected_similar_player_name) & (df['Squad'] == selected_similar_player_club)].iloc[0][selected_columns]
+        most_similar_player_name = df.iloc[similar_players_indices[0]]['Player']
+        most_similar_player_club = df.iloc[similar_players_indices[0]]['Squad']
+        most_similar_player_metrics = df[(df['Player'] == most_similar_player_name) & (df['Squad'] == most_similar_player_club)].iloc[0][selected_columns]
         given_player_metrics = dataf[(dataf['Player'] == player_name) & (dataf['Squad'] == player_club)].iloc[0][selected_columns]
 
         # Parameters (metrics) for the radar chart
@@ -171,7 +151,7 @@ if st.session_state.similar_players:
         # Concatenate the filtered dataframe with the player data to include it back
         df_with_player = pd.concat([df, player_data_full])
 
-
+        # Lower and upper boundaries for the statistics
         low = [df_with_player[col].min() for col in selected_columns]
         high = [df_with_player[col].max() for col in selected_columns]
 
@@ -220,13 +200,15 @@ if st.session_state.similar_players:
         title2_text = axs['title'].text(0.01, 0.25, player_club, fontsize=20,
                                         fontproperties=robotto_thin.prop,
                                         ha='left', va='center', color='#01c49d')
-        title3_text = axs['title'].text(0.99, 0.65, selected_similar_player_name, fontsize=25,
+        title3_text = axs['title'].text(0.99, 0.65, most_similar_player_name, fontsize=25,
                                         fontproperties=robotto_bold.prop,
                                         ha='right', va='center', color='#d80499')
-        title4_text = axs['title'].text(0.99, 0.25, selected_similar_player_club, fontsize=20,
+        title4_text = axs['title'].text(0.99, 0.25, most_similar_player_club, fontsize=20,
                                         fontproperties=robotto_thin.prop,
                                         ha='right', va='center', color='#d80499')
         fig.set_facecolor('#121212')
 
         st.pyplot(fig)
+    else:
+        st.write(f"No players found meeting the criteria.")
 
