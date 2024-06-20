@@ -126,7 +126,7 @@ templates = {
 
 
 for column in all_columns:
-    if column != '90s' and column != 'Age': 
+    if column != '90s' or column != 'Age': 
         dataf[column] = dataf[column] / dataf['90s']
 
 
