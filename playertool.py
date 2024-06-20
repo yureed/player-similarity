@@ -61,8 +61,9 @@ def find_similar_players(player_name, player_club, positions, min_90s, selected_
     player_data = dataf[(dataf['Player'] == player_name) & (dataf['Squad'] == player_club)][selected_columns]
     
     df = dataf[dataf['Pos'].apply(lambda x: any(pos in x for pos in positions)) & 
-               (dataf['90s'] >= min_90s) & 
-               ~((dataf['Player'] == player_name) & (dataf['Squad'] == player_club))]
+           (dataf['90s'] >= min_90s) & 
+           ~((dataf['Player'] == player_name) & (dataf['Squad'] == player_club))]
+
     
     # Remove rows with missing values in selected columns
     df = df.dropna(subset=selected_columns)
@@ -115,7 +116,7 @@ selected_columns = st.multiselect('Select Columns', all_columns, default=selecte
 
 # Find similar players
 if st.button('Find Similar Players'):
-    df, similar_players_indices, similarity_scores = find_similar_players(player_name, player_club, selected_position, min_90s, selected_columns, dataf)
+    df, similar_players_indices, similarity_scores = find_similar_players(player_name, player_club, selected_positions, min_90s, selected_columns, dataf)
 
     if similar_players_indices is not None:
         num_similar_players = min(10, len(similar_players_indices))  # Number of similar players to retrieve
