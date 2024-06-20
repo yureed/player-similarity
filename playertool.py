@@ -195,6 +195,11 @@ min_90s_value = int(dataf['90s'].min())
 max_90s_value = int(dataf['90s'].max())
 min_90s = st.slider('Minimum 90s played', min_value=min_90s_value, max_value=max_90s_value, value=min_90s_value)
 
+# Age filter with dynamic min and max values
+min_age_value = int(dataf['Age'].min())
+max_age_value = int(dataf['Age'].max())
+min_age, max_age = st.slider('Age Range', min_value=min_age_value, max_value=max_age_value, value=(min_age_value, max_age_value))
+
 template_options = list(templates.keys())
 selected_template = st.selectbox('Select Template', template_options)
 
