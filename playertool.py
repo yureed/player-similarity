@@ -16,6 +16,8 @@ def fix_encoding(text):
 dataf['Player'] = dataf['Player'].apply(fix_encoding)
 dataf['Squad'] = dataf['Squad'].apply(fix_encoding)
 
+dataf = dataf[~dataf['Pos'].str.contains('GK')]
+
 
 dataf['90s'] = dataf['Min'] / 90
 
