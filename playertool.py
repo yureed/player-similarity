@@ -179,7 +179,7 @@ This utilizes **cosine similarity** and **only works for the selected columns**.
 
 ---
 
-**Data is from FBRef and credit to [Ben Griffis](https://x.com/BeGriffis), whose code I used to get the FBRef Data.**
+**Data is from FBRef (From 23-24 Season) and credit to [Ben Griffis](https://x.com/BeGriffis), whose code I used to get the FBRef Data.**
 """)
 
 
