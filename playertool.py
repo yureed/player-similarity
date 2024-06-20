@@ -86,7 +86,7 @@ player_club = player_club[:-1]  # Remove trailing ')'
 # Position selection
 positions = ['DF', 'MF', 'FW']
 selected_position = st.selectbox('Select Position', positions)
-st.write(dataf['90s')
+st.write(dataf["90s")
 # 90s filter with dynamic min and max values
 min_90s_value = int(dataf['90s'].min())
 max_90s_value = int(dataf['90s'].max())
