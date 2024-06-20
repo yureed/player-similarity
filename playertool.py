@@ -28,25 +28,24 @@ templates = {
         'Goals', 'Shots', 'Shots on Target', 'Assists', 'Key Passes', 'Crosses', 'Succ Drb', 'AerialWins', 'Prog Carries', 'Carries To Pen Area'
     ],
     'Central Forward (FW)': [
-        'Goals', 'Shots', 'Shots on Target', 'Assists', 'Key Passes', 'AerialWins', 'Succ Drb', 'Touches in Pen Area', 'xG'
+        'Goals', 'Shots', 'Shots on Target', 'Assists', 'Key Passes', 'AerialWins', 'Succ Drb', 'Att Pen Touch', 'xG', 'Penalties'
     ],
     'Central Midfielder (MF)': [
         'Passes Completed', 'Key Passes', 'Assists', 'Tackles Won', 'Int', 'Prog Pass Dist', 'Prog Carries', 'Shots', 'Goals', 'Touches'
     ],
     'Defensive Midfielder (MF)': [
-        'Tackles', 'Interceptions', 'Clearances', 'Blocks', 'Passes Completed', 'Passes Attempted', 'Prog Pass Dist', 'Recov', 'AerialWins', 'Touches'
+        'Tackle', 'Int', 'Clr', 'Blocks', 'Passes Completed', 'Passes Attempted', 'Prog Pass Dist', 'Recov', 'AerialWins', 'Touches'
     ],
     'Attacking Midfielder (MF)': [
-        'Goals', 'Assists', 'Key Passes', 'Shots', 'Shots on Target', 'Succ Drb', 'Prog Carries', 'Passes into Pen Area', 'xA', 'xG'
+        'Goals', 'Assists', 'Key Passes', 'Shots', 'Shots on Target', 'Succ Drb', 'Prog Carries', 'Passes into Penalty Area', 'xA', 'xG'
     ],
     'Fullback (DF)': [
-        'Tackles', 'Interceptions', 'Clearances', 'Blocks', 'Crosses', 'Passes Completed', 'Passes Attempted', 'Succ Drb', 'Prog Pass Dist', 'Touches'
+        'Tackle', 'Int', 'Clr', 'Blocks', 'Crosses', 'Passes Completed', 'Passes Attempted', 'Succ Drb', 'Prog Pass Dist', 'Touches'
     ],
     'Center Back (DF)': [
-        'Tackles', 'Interceptions', 'Clearances', 'Blocks', 'AerialWins', 'Passes Completed', 'Passes Attempted', 'Prog Pass Dist', 'Touches', 'Recov'
+        'Tackle', 'Int', 'Clr', 'Blocks', 'AerialWins', 'Passes Completed', 'Passes Attempted', 'Prog Pass Dist', 'Touches', 'Recov'
     ]
 }
-
 
 for column in all_columns:
     if column != '90s':  # Ensure '90s' column is not normalized
