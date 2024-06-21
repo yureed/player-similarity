@@ -243,12 +243,19 @@ if st.button('Find Similar Players'):
         # Lower and upper boundaries for the statistics
         low = [df_with_player[col].min() for col in selected_columns]
         high = [df_with_player[col].max() for col in selected_columns]
+        # List of columns where lower values are better
+        lower_is_better = ['Drb Past', 'Err', 'Carry Mistakes', 'Disposesed', 'Yellows', 'Reds', 'Yellow2', 'Fls', 'Off', 'AerialLoss']
 
-        # Create the radar chart
+
+        lower_columns = [col for col in selected_columns if col in lower_is_better]
+
+
         radar = Radar(params, low, high,
-                      round_int=[False]*len(params),
-                      num_rings=4,  
-                      ring_width=1, center_circle_radius=1)
+              lower_is_better=lower_columns,
+              round_int=[False]*len(params),
+              num_rings=4,  
+              ring_width=1, center_circle_radius=1)
+
 
         URL1 = ('https://raw.githubusercontent.com/googlefonts/SourceSerifProGFVersion/main/fonts/'
                 'SourceSerifPro-Regular.ttf')
