@@ -249,7 +249,7 @@ if st.button('Find Similar Players'):
 
         lower_columns = [col for col in selected_columns if col in lower_is_better]
 
-        st.write(lower_columns)
+        
         radar = Radar(params, low, high,
               lower_is_better=lower_columns,
               round_int=[False]*len(params),
