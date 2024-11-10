@@ -214,26 +214,61 @@ if st.button('Find Similar Players'):
             similar_player_club = df.iloc[similar_player_index]['Squad']
             st.write(f"{i+1}. {similar_player_name} ({similar_player_club}) (Similarity Score: {similarity_score:.3f})")
 
-        # Display radar chart for the most similar player
+        # Radar chart for the most similar player
         most_similar_player_name = df.iloc[similar_players_indices[0]]['Player']
         most_similar_player_club = df.iloc[similar_players_indices[0]]['Squad']
         most_similar_player_metrics = df[(df['Player'] == most_similar_player_name) & (df['Squad'] == most_similar_player_club)].iloc[0][selected_columns]
         given_player_metrics = dataf[(dataf['Player'] == player_name) & (dataf['Squad'] == player_club)].iloc[0][selected_columns]
 
-        # Radar chart setup
         params = selected_columns
-        low = [filtered_data[col].min() for col in selected_columns]
-        high = [filtered_data[col].max() for col in selected_columns]
+        player_data_full = dataf[(dataf['Player'] == player_name) & (dataf['Squad'] == player_club)]
+        df_with_player = pd.concat([df, player_data_full])
+        low = [df_with_player[col].min() for col in selected_columns]
+        high = [df_with_player[col].max() for col in selected_columns]
         lower_is_better = ['Drb Past', 'Err', 'Carry Mistakes', 'Disposesed', 'Yellows', 'Reds', 'Yellow2', 'Fls', 'Off', 'AerialLoss']
-        radar = Radar(params, low, high, lower_is_better=[col for col in selected_columns if col in lower_is_better], round_int=[False]*len(params), num_rings=4, ring_width=1, center_circle_radius=1)
+        lower_columns = [col for col in selected_columns if col in lower_is_better]
 
-        # Font setup
+        radar = Radar(params, low, high, lower_is_better=lower_columns, round_int=[False]*len(params), num_rings=4, ring_width=1, center_circle_radius=1)
         URL1 = ('https://raw.githubusercontent.com/googlefonts/SourceSerifProGFVersion/main/fonts/SourceSerifPro-Regular.ttf')
-        robotto_bold = FontManager(URL1)
+        serif_regular = FontManager(URL1)
+        URL2 = ('https://raw.githubusercontent.com/googlefonts/SourceSerifProGFVersion/main/fonts/SourceSerifPro-ExtraLight.ttf')
+        serif_extra_light = FontManager(URL2)
+        URL3 = ('https://raw.githubusercontent.com/google/fonts/main/ofl/rubikmonoone/RubikMonoOne-Regular.ttf')
+        rubik_regular = FontManager(URL3)
+        URL4 = 'https://raw.githubusercontent.com/googlefonts/roboto/main/src/hinted/Roboto-Thin.ttf'
+        robotto_thin = FontManager(URL4)
+        URL5 = ('https://raw.githubusercontent.com/google/fonts/main/apache/robotoslab/RobotoSlab%5Bwght%5D.ttf')
+        robotto_bold = FontManager(URL5)
 
-        fig, axs = grid(figheight=14, grid_height=0.915, title_height=0.06, endnote_height=0.025, title_space=0, endnote_space=0, grid_key='radar', axis=False)
+        fig, axs = grid(figheight=14, grid_height=0.915, title_height=0.06, endnote_height=0.025, title_space=0
+ # Setting up the radar chart figure and drawing the radar
+        fig, axs = grid(figheight=14, grid_height=0.915, title_height=0.06, endnote_height=0.025,
+                        title_space=0, endnote_space=0, grid_key='radar', axis=False)
+
         radar.setup_axis(ax=axs['radar'], facecolor='black')
-        radar.draw_radar_compare(given_player_metrics, most_similar_player_metrics, ax=axs['radar'], kwargs_radar={'facecolor': '#00f2c1', 'alpha': 0.6}, kwargs_compare={'facecolor': '#d80499', 'alpha': 0.6})
+        rings_inner = radar.draw_circles(ax=axs['radar'], facecolor='orange', edgecolor='black')
+        radar_output = radar.draw_radar_compare(given_player_metrics, most_similar_player_metrics, ax=axs['radar'],
+                                                kwargs_radar={'facecolor': '#00f2c1', 'alpha': 0.6},
+                                                kwargs_compare={'facecolor': '#d80499', 'alpha': 0.6})
+        radar_poly, radar_poly2, vertices1, vertices2 = radar_output
+        range_labels = radar.draw_range_labels(ax=axs['radar'], fontsize=23, color='white')
+        param_labels = radar.draw_param_labels(ax=axs['radar'], fontsize=25, color='white')
+
+        # Scatter plot for vertices
+        axs['radar'].scatter(vertices1[:, 0], vertices1[:, 1], c='#00f2c1', edgecolors='#6d6c6d', marker='o', s=150, zorder=2)
+        axs['radar'].scatter(vertices2[:, 0], vertices2[:, 1], c='#d80499', edgecolors='#6d6c6d', marker='o', s=150, zorder=2)
+
+        # Title texts
+        title1_text = axs['title'].text(0.01, 0.65, player_name, fontsize=25, color='#01c49d',
+                                        fontproperties=robotto_bold.prop, ha='left', va='center')
+        title2_text = axs['title'].text(0.01, 0.25, player_club, fontsize=20,
+                                        fontproperties=robotto_thin.prop, ha='left', va='center', color='#01c49d')
+        title3_text = axs['title'].text(0.99, 0.65, most_similar_player_name, fontsize=25,
+                                        fontproperties=robotto_bold.prop, ha='right', va='center', color='#d80499')
+        title4_text = axs['title'].text(0.99, 0.25, most_similar_player_club, fontsize=20,
+                                        fontproperties=robotto_thin.prop, ha='right', va='center', color='#d80499')
+
+        fig.set_facecolor('#121212')
         st.pyplot(fig)
     else:
         st.write("No players found meeting the criteria.")
