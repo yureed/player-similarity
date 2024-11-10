@@ -131,25 +131,25 @@ for column in all_columns:
 # Sidebar for tool selection
 tool_choice = st.sidebar.radio("Choose Tool", options=["Similarity Checker", "Scouting Tool", "Select a Player"])
 
-# Sidebar for competition filter
-competition_options = ['All Competitions'] + list(dataf['Comp'].unique())
-selected_competitions = st.sidebar.multiselect("Select Competitions", competition_options, default='All Competitions')
-
-if 'All Competitions' in selected_competitions:
-    filtered_data = dataf
-else:
-    filtered_data = dataf[dataf['Comp'].isin(selected_competitions)]
-
-# Position, age, and minutes played filters
-positions = ['DF', 'MF', 'FW']
-selected_positions = st.sidebar.multiselect('Select Positions', positions, default=positions)
-min_90s = st.sidebar.slider('Minimum 90s played', int(dataf['90s'].min()), int(dataf['90s'].max()), int(dataf['90s'].min()))
-min_age, max_age = st.sidebar.slider('Age Range', int(dataf['Age'].min()), int(dataf['Age'].max()), (int(dataf['Age'].min()), int(dataf['Age'].max())))
 
 
 # Conditional logic based on tool choice
 if tool_choice == "Similarity Checker":
     # Player selection for similarity checker
+    # Sidebar for competition filter
+    competition_options = ['All Competitions'] + list(dataf['Comp'].unique())
+    selected_competitions = st.sidebar.multiselect("Select Competitions", competition_options, default='All Competitions')
+    
+    if 'All Competitions' in selected_competitions:
+        filtered_data = dataf
+    else:
+        filtered_data = dataf[dataf['Comp'].isin(selected_competitions)]
+    
+    # Position, age, and minutes played filters
+    positions = ['DF', 'MF', 'FW']
+    selected_positions = st.sidebar.multiselect('Select Positions', positions, default=positions)
+    min_90s = st.sidebar.slider('Minimum 90s played', int(dataf['90s'].min()), int(dataf['90s'].max()), int(dataf['90s'].min()))
+    min_age, max_age = st.sidebar.slider('Age Range', int(dataf['Age'].min()), int(dataf['Age'].max()), (int(dataf['Age'].min()), int(dataf['Age'].max())))
     player_options = [f"{row['Player']} ({row['Squad']})" for idx, row in filtered_data.iterrows()]
     selected_player = st.sidebar.selectbox('Select Player', player_options)
     player_name, player_club = selected_player.split(' (')
@@ -283,7 +283,21 @@ if tool_choice == "Similarity Checker":
 
 
 elif tool_choice == "Scouting Tool":
-    # Scouting tool with weights and no player selection
+        # Scouting tool with weights and no player selection
+        # Sidebar for competition filter
+    competition_options = ['All Competitions'] + list(dataf['Comp'].unique())
+    selected_competitions = st.sidebar.multiselect("Select Competitions", competition_options, default='All Competitions')
+    
+    if 'All Competitions' in selected_competitions:
+        filtered_data = dataf
+    else:
+        filtered_data = dataf[dataf['Comp'].isin(selected_competitions)]
+    
+    # Position, age, and minutes played filters
+    positions = ['DF', 'MF', 'FW']
+    selected_positions = st.sidebar.multiselect('Select Positions', positions, default=positions)
+    min_90s = st.sidebar.slider('Minimum 90s played', int(dataf['90s'].min()), int(dataf['90s'].max()), int(dataf['90s'].min()))
+    min_age, max_age = st.sidebar.slider('Age Range', int(dataf['Age'].min()), int(dataf['Age'].max()), (int(dataf['Age'].min()), int(dataf['Age'].max())))
     selected_template = st.sidebar.selectbox('Select Template', list(templates.keys()))
     selected_columns = st.sidebar.multiselect('Select Columns', all_columns, default=templates[selected_template])
 
@@ -344,11 +358,11 @@ elif tool_choice == "Select a Player":
     player_name, player_club = selected_player.split(' (')
     player_club = player_club[:-1]  # Remove trailing ')'
 
-    # Age filter
+
     selected_age_range = st.sidebar.slider('Select Age Range', int(dataf['Age'].min()), int(dataf['Age'].max()), (int(dataf['Age'].min()), int(dataf['Age'].max())))
 
-    # Minimum 90s played filter
-    min_90s_played = st.sidebar.slider('Minimum 90s Played', min_value=0.0, max_value=float(dataf['90s'].max()), value=1.0)
+
+    min_90s = st.sidebar.slider('Minimum 90s played', int(dataf['90s'].min()), int(dataf['90s'].max()), int(dataf['90s'].min()))
 
     # Select up to 12 columns for radar chart
     selected_columns = st.sidebar.multiselect('Select Columns (up to 12)', all_columns, default=all_columns[:12], max_selections=12)
