@@ -365,7 +365,7 @@ elif tool_choice == "Analyze One Player":
         (filtered_data['Age'] <= selected_age_range[1]) &
         (filtered_data['90s'] >= min_90s)
     ]
-
+    st.write('min_90s')
     if player_data.empty:
         st.write(f"No data available for {player_name} meeting the selected criteria.")
     else:
