@@ -333,28 +333,33 @@ elif tool_choice == "Scouting Tool":
         else:
             st.write("No players found meeting the criteria.")
 elif tool_choice == "Analyze One Player":
+    # Competition filter
     competition_options = ['All Competitions'] + list(dataf['Comp'].unique())
     selected_competitions = st.sidebar.multiselect("Select Competitions", competition_options, default='All Competitions')
 
+    # Filter data based on competition selection
     if 'All Competitions' in selected_competitions:
         filtered_data = dataf
     else:
         filtered_data = dataf[dataf['Comp'].isin(selected_competitions)]
 
+    # Player selection from filtered data
     player_options = [f"{row['Player']} ({row['Squad']})" for idx, row in filtered_data.iterrows()]
     selected_player = st.sidebar.selectbox('Select Player', player_options)
     player_name, player_club = selected_player.split(' (')
-    player_club = player_club[:-1]
+    player_club = player_club[:-1]  # Remove trailing ')'
 
+    # Age range and minimum 90s played filter
     selected_age_range = st.sidebar.slider('Select Age Range', int(filtered_data['Age'].min()), int(filtered_data['Age'].max()),
                                            (int(filtered_data['Age'].min()), int(filtered_data['Age'].max())))
     min_90s = st.sidebar.slider('Minimum 90s played', int(filtered_data['90s'].min()), int(filtered_data['90s'].max()), int(filtered_data['90s'].min()))
 
+    # Template and columns selection for radar chart
     template_options = list(templates.keys())
     selected_template = st.sidebar.selectbox('Select Template', template_options)
     selected_columns = st.sidebar.multiselect('Select Columns', selected_columns, default=templates[selected_template])
 
-    # Filter data for selected player and criteria
+    # Apply all filters for selected player and criteria
     player_data = filtered_data[
         (filtered_data['Player'] == player_name) &
         (filtered_data['Squad'] == player_club) &
@@ -402,4 +407,5 @@ elif tool_choice == "Analyze One Player":
 
         # Display the radar chart
         st.pyplot(fig)
+
 
