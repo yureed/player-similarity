@@ -17,12 +17,6 @@ dataf['Player'] = dataf['Player'].apply(fix_encoding)
 dataf['Squad'] = dataf['Squad'].apply(fix_encoding)
 
 
-competition_options = dataf['Comp'].unique()
-selected_competition = st.selectbox("Select Competition", competition_options)
-
-
-dataf = dataf[dataf['Comp'] == selected_competition]
-
 
 dataf = dataf[~dataf['Pos'].str.contains('GK')]
 dataf = dataf[dataf['Age'] != 0]
@@ -187,6 +181,12 @@ This utilizes **cosine similarity** and **only works for the selected columns**.
 
 **Data is from FBRef (From 23-24 Season) and credit to [Ben Griffis](https://x.com/BeGriffis), whose code I used to get the FBRef Data.**
 """)
+
+competition_options = dataf['Comp'].unique()
+selected_competition = st.selectbox("Select Competition", competition_options)
+
+
+dataf = dataf[dataf['Comp'] == selected_competition]
 
 
 player_options = [f"{row['Player']} ({row['Squad']})" for idx, row in dataf.iterrows()]
