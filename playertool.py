@@ -265,7 +265,7 @@ elif tool_choice == "Select a Player":
     # Filters and options for Select a Player
     player_options = [f"{row['Player']} ({row['Squad']})" for idx, row in dataf.iterrows()]
     selected_player = st.sidebar.selectbox('Select Player', player_options)
-    player_name, player_club = selected_player.split(' ('))
+    player_name, player_club = selected_player.split(' (')
     player_club = player_club[:-1]  # Remove trailing ')'
 
     # Additional filters for the player radar
