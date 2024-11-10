@@ -123,12 +123,13 @@ templates = {
         'Prog Carries', 'Carries To Pen Area', 'Prog Passes Rec'
     ]
 }
+# Adjust columns for per-90 calculations
 for column in all_columns:
     if column != '90s' and column != 'Age':
         dataf[column] = dataf[column] / dataf['90s']
 
 # Sidebar for tool selection
-tool_choice = st.sidebar.radio("Choose Tool", options=["Similarity Checker", "Scouting Tool"])
+tool_choice = st.sidebar.radio("Choose Tool", options=["Similarity Checker", "Scouting Tool", "Select a Player"])
 
 # Sidebar for competition filter
 competition_options = ['All Competitions'] + list(dataf['Comp'].unique())
@@ -144,6 +145,7 @@ positions = ['DF', 'MF', 'FW']
 selected_positions = st.sidebar.multiselect('Select Positions', positions, default=positions)
 min_90s = st.sidebar.slider('Minimum 90s played', int(dataf['90s'].min()), int(dataf['90s'].max()), int(dataf['90s'].min()))
 min_age, max_age = st.sidebar.slider('Age Range', int(dataf['Age'].min()), int(dataf['Age'].max()), (int(dataf['Age'].min()), int(dataf['Age'].max())))
+
 
 # Conditional logic based on tool choice
 if tool_choice == "Similarity Checker":
@@ -335,3 +337,54 @@ elif tool_choice == "Scouting Tool":
                 st.write(f"{i+1}. {player_name} ({player_club}) - Score: {score:.2f}")
         else:
             st.write("No players found meeting the criteria.")
+elif tool_choice == "Select a Player":
+    # Player selection for viewing radar chart
+    player_options = [f"{row['Player']} ({row['Squad']})" for idx, row in filtered_data.iterrows()]
+    selected_player = st.sidebar.selectbox('Select Player', player_options)
+    player_name, player_club = selected_player.split(' (')
+    player_club = player_club[:-1]  # Remove trailing ')'
+
+    # Age filter
+    selected_age_range = st.sidebar.slider('Select Age Range', int(dataf['Age'].min()), int(dataf['Age'].max()), (int(dataf['Age'].min()), int(dataf['Age'].max())))
+
+    # Minimum 90s played filter
+    min_90s_played = st.sidebar.slider('Minimum 90s Played', min_value=0.0, max_value=float(dataf['90s'].max()), value=1.0)
+
+    # Select up to 12 columns for radar chart
+    selected_columns = st.sidebar.multiselect('Select Columns (up to 12)', all_columns, default=all_columns[:12], max_selections=12)
+
+    # Fetch player data for radar chart
+    player_data = dataf[(dataf['Player'] == player_name) & (dataf['Squad'] == player_club) & 
+                        (dataf['Age'] >= selected_age_range[0]) & (dataf['Age'] <= selected_age_range[1]) &
+                        (dataf['90s'] >= min_90s_played)]
+
+    if player_data.empty:
+        st.write(f"No data available for {player_name} meeting the selected criteria.")
+    else:
+        st.write(f"Displaying radar chart for {player_name} ({player_club})")
+
+        params = selected_columns
+        player_metrics = player_data.iloc[0][selected_columns]
+
+        # Calculate min and max for selected columns
+        low = [filtered_data[col].min() for col in selected_columns]
+        high = [filtered_data[col].max() for col in selected_columns]
+
+        # Radar chart setup
+        radar = Radar(params, low, high,
+                      lower_is_better=[],
+                      num_rings=4,  
+                      ring_width=1, center_circle_radius=1)
+
+        fig, axs = grid(figheight=14, grid_height=0.915, title_height=0.06, endnote_height=0.025,
+                        title_space=0, endnote_space=0, grid_key='radar', axis=False)
+
+        radar.setup_axis(ax=axs['radar'], facecolor='black')
+        rings_inner = radar.draw_circles(ax=axs['radar'], facecolor='orange', edgecolor='black')
+        radar_output = radar.draw_radar(player_metrics, ax=axs['radar'], kwargs_radar={'facecolor': '#00f2c1', 'alpha': 0.6})
+        
+        range_labels = radar.draw_range_labels(ax=axs['radar'], fontsize=23, color='white')
+        param_labels = radar.draw_param_labels(ax=axs['radar'], fontsize=25, color='white')
+        fig.set_facecolor('#121212')
+        
+        st.pyplot(fig)
