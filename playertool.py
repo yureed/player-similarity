@@ -202,7 +202,7 @@ for col in selected_columns:
 
 # Find similar players
 if st.button('Find Similar Players'):
-    df, similar_players_indices, similarity_scores = find_similar_players(player_name, player_club, selected_positions, min_90s, min_age, max_age, selected_columns, dataf)
+    df, similar_players_indices, similarity_scores = find_weighted_similar_players(player_name, player_club, selected_positions, min_90s, min_age, max_age, selected_columns, dataf)
 
     if similar_players_indices is not None:
         num_similar_players = min(10, len(similar_players_indices))  
