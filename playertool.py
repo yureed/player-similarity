@@ -146,7 +146,7 @@ templates = {
     ]
 }
 
-dataf = dataf[~dataf['Main Position'].str.strip().str.lower().isin(['attack', 'defense', 'midfield'])]
+dataf = dataf[~dataf['Main Position'].str.strip().str.lower().isin(['attack', 'defence', 'midfield'])]
 
 # Calculate '90s' based on minutes played and add it as a new column
 dataf['90s'] = dataf['Min'] / 90
