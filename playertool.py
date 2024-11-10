@@ -124,194 +124,116 @@ templates = {
     ]
 }
 
-
+# Adjust columns for per-90 calculations
 for column in all_columns:
-    if column != '90s' and column != 'Age': 
+    if column != '90s' and column != 'Age':
         dataf[column] = dataf[column] / dataf['90s']
 
-
-def find_similar_players(player_name, player_club, positions, min_90s, min_age, max_age, selected_columns, dataf):
+# Function to calculate weighted similarity
+def find_weighted_similar_players(player_name, player_club, positions, min_90s, min_age, max_age, selected_columns, weights, dataf):
     if not ((dataf['Player'] == player_name) & (dataf['Squad'] == player_club)).any():
         return None, None
-    
 
     player_data = dataf[(dataf['Player'] == player_name) & (dataf['Squad'] == player_club)][selected_columns]
-    
-
     df = dataf[dataf['Pos'].apply(lambda x: any(pos in x for pos in positions)) & 
                (dataf['90s'] >= min_90s) &
                (dataf['Age'] >= min_age) &
                (dataf['Age'] <= max_age) &
                ~((dataf['Player'] == player_name) & (dataf['Squad'] == player_club))]
-    
 
     if df.empty:
         return None, None
-    
 
     df = df.dropna(subset=selected_columns)
-    
 
+    # Apply scaling with weights
     scaler = StandardScaler()
     metrics_data_scaled = scaler.fit_transform(df[selected_columns])
     player_data_scaled = scaler.transform(player_data)
-    
 
-    cosine_sim_matrix = cosine_similarity(metrics_data_scaled, player_data_scaled)
-    
-  
+    # Adjust metrics data by weights
+    weighted_metrics = metrics_data_scaled * np.array([weights[col] for col in selected_columns])
+    weighted_player_data = player_data_scaled * np.array([weights[col] for col in selected_columns])
+
+    # Calculate weighted cosine similarity
+    cosine_sim_matrix = cosine_similarity(weighted_metrics, weighted_player_data)
     similarity_scores = cosine_sim_matrix.flatten()
     
-    
+    # Sort by similarity scores
     similar_players_indices = np.argsort(similarity_scores)[::-1]
     
     return df, similar_players_indices, similarity_scores
 
+# Streamlit UI setup
 st.title('Player Similarity Finder')
-st.write("""
-## Important Notice
+st.write("## Important Notice\nThis tool uses cosine similarity for selected metrics. You can add or remove metrics and adjust weights to customize the similarity search.")
 
-**First of all, I am not entirely saying to rely on this similarity tool or any data analysis as it is imperative to consult videos and other sources.**
-
-This utilizes **cosine similarity** and **only works for the selected columns**. You can choose any template (Yes, as you can see these are Football Manager Roles to get started.) I have added some columns, they may not entirely represent the role but they are something for you to get started with.  **You can add more columns for yourself if you want or remove any.** I would not recommend adding too many columns as the Radar might get glitched out. However, the similarity tool will work.
-
-**For now, only the most similar player will have his radar shown.**
-
----
-
-**Data is from FBRef (From 23-24 Season) and credit to [Ben Griffis](https://x.com/BeGriffis), whose code I used to get the FBRef Data.**
-""")
-
-
+# Competition filter
 competition_options = ['All Competitions'] + list(dataf['Comp'].unique())
 selected_competitions = st.multiselect("Select Competitions", competition_options, default='All Competitions')
 
-
 if 'All Competitions' in selected_competitions:
-    filtered_data = dataf 
+    filtered_data = dataf
 else:
     filtered_data = dataf[dataf['Comp'].isin(selected_competitions)]
 
-
-player_options = [f"{row['Player']} ({row['Squad']})" for idx, row in dataf.iterrows()]
+# Player selection
+player_options = [f"{row['Player']} ({row['Squad']})" for idx, row in filtered_data.iterrows()]
 selected_player = st.selectbox('Select Player', player_options)
-
 player_name, player_club = selected_player.split(' (')
-player_club = player_club[:-1]  # Remove trailing ')'
+player_club = player_club[:-1]
 
-
+# Position, age, and minutes played filters
 positions = ['DF', 'MF', 'FW']
 selected_positions = st.multiselect('Select Positions', positions, default=positions)
+min_90s = st.slider('Minimum 90s played', int(dataf['90s'].min()), int(dataf['90s'].max()), int(dataf['90s'].min()))
+min_age, max_age = st.slider('Age Range', int(dataf['Age'].min()), int(dataf['Age'].max()), (int(dataf['Age'].min()), int(dataf['Age'].max())))
 
-min_90s_value = int(dataf['90s'].min())
-max_90s_value = int(dataf['90s'].max())
-min_90s = st.slider('Minimum 90s played', min_value=min_90s_value, max_value=max_90s_value, value=min_90s_value)
-
-
-min_age_value = int(dataf['Age'].min())
-max_age_value = int(dataf['Age'].max())
-min_age, max_age = st.slider('Age Range', min_value=min_age_value, max_value=max_age_value, value=(min_age_value, max_age_value))
-
-
+# Template and column selection
 template_options = list(templates.keys())
 selected_template = st.selectbox('Select Template', template_options)
+selected_columns = st.multiselect('Select Columns', all_columns, default=templates[selected_template])
 
-
-selected_columns = templates[selected_template]
-
-
-selected_columns = st.multiselect('Select Columns', all_columns, default=selected_columns)
+# Weights for each selected column
+st.write("### Assign weights to each metric")
+weights = {}
+for col in selected_columns:
+    weights[col] = st.slider(f"Weight for {col}", min_value=0.0, max_value=1.0, value=0.5)
 
 # Find similar players
 if st.button('Find Similar Players'):
-    df, similar_players_indices, similarity_scores = find_similar_players(player_name, player_club, selected_positions, min_90s, min_age, max_age, selected_columns, dataf)
+    df, similar_players_indices, similarity_scores = find_weighted_similar_players(player_name, player_club, selected_positions, min_90s, min_age, max_age, selected_columns, weights, filtered_data)
 
     if similar_players_indices is not None:
-        num_similar_players = min(10, len(similar_players_indices))  
+        num_similar_players = min(10, len(similar_players_indices))
         st.write(f"Players similar to {player_name} from {player_club}:")
-        similar_players = []
         for i in range(num_similar_players):
             similar_player_index = similar_players_indices[i]
             similarity_score = similarity_scores[similar_player_index]
             similar_player_name = df.iloc[similar_player_index]['Player']
             similar_player_club = df.iloc[similar_player_index]['Squad']
-            similar_players.append(f"{similar_player_name} ({similar_player_club})")
             st.write(f"{i+1}. {similar_player_name} ({similar_player_club}) (Similarity Score: {similarity_score:.3f})")
-        
-      
+
+        # Display radar chart for the most similar player
         most_similar_player_name = df.iloc[similar_players_indices[0]]['Player']
         most_similar_player_club = df.iloc[similar_players_indices[0]]['Squad']
         most_similar_player_metrics = df[(df['Player'] == most_similar_player_name) & (df['Squad'] == most_similar_player_club)].iloc[0][selected_columns]
         given_player_metrics = dataf[(dataf['Player'] == player_name) & (dataf['Squad'] == player_club)].iloc[0][selected_columns]
 
+        # Radar chart setup
         params = selected_columns
-
-        player_data_full = dataf[(dataf['Player'] == player_name) & (dataf['Squad'] == player_club)]
-
-        df_with_player = pd.concat([df, player_data_full])
-
-        # Lower and upper boundaries for the statistics
-        low = [df_with_player[col].min() for col in selected_columns]
-        high = [df_with_player[col].max() for col in selected_columns]
-        # List of columns where lower values are better
+        low = [filtered_data[col].min() for col in selected_columns]
+        high = [filtered_data[col].max() for col in selected_columns]
         lower_is_better = ['Drb Past', 'Err', 'Carry Mistakes', 'Disposesed', 'Yellows', 'Reds', 'Yellow2', 'Fls', 'Off', 'AerialLoss']
+        radar = Radar(params, low, high, lower_is_better=[col for col in selected_columns if col in lower_is_better], round_int=[False]*len(params), num_rings=4, ring_width=1, center_circle_radius=1)
 
+        # Font setup
+        URL1 = ('https://raw.githubusercontent.com/googlefonts/SourceSerifProGFVersion/main/fonts/SourceSerifPro-Regular.ttf')
+        robotto_bold = FontManager(URL1)
 
-        lower_columns = [col for col in selected_columns if col in lower_is_better]
-
-        
-        radar = Radar(params, low, high,
-              lower_is_better=lower_columns,
-              round_int=[False]*len(params),
-              num_rings=4,  
-              ring_width=1, center_circle_radius=1)
-
-
-        URL1 = ('https://raw.githubusercontent.com/googlefonts/SourceSerifProGFVersion/main/fonts/'
-                'SourceSerifPro-Regular.ttf')
-        serif_regular = FontManager(URL1)
-        URL2 = ('https://raw.githubusercontent.com/googlefonts/SourceSerifProGFVersion/main/fonts/'
-                'SourceSerifPro-ExtraLight.ttf')
-        serif_extra_light = FontManager(URL2)
-        URL3 = ('https://raw.githubusercontent.com/google/fonts/main/ofl/rubikmonoone/'
-                'RubikMonoOne-Regular.ttf')
-        rubik_regular = FontManager(URL3)
-        URL4 = 'https://raw.githubusercontent.com/googlefonts/roboto/main/src/hinted/Roboto-Thin.ttf'
-        robotto_thin = FontManager(URL4)
-        URL5 = ('https://raw.githubusercontent.com/google/fonts/main/apache/robotoslab/'
-                'RobotoSlab%5Bwght%5D.ttf')
-        robotto_bold = FontManager(URL5)
-
-        fig, axs = grid(figheight=14, grid_height=0.915, title_height=0.06, endnote_height=0.025,
-                        title_space=0, endnote_space=0, grid_key='radar', axis=False)
-
-
-        radar.setup_axis(ax=axs['radar'], facecolor='black')  
-        rings_inner = radar.draw_circles(ax=axs['radar'], facecolor='orange', edgecolor='black')
-        radar_output = radar.draw_radar_compare(given_player_metrics, most_similar_player_metrics, ax=axs['radar'],
-                                                kwargs_radar={'facecolor': '#00f2c1', 'alpha': 0.6},
-                                                kwargs_compare={'facecolor': '#d80499', 'alpha': 0.6})
-        radar_poly, radar_poly2, vertices1, vertices2 = radar_output
-        range_labels = radar.draw_range_labels(ax=axs['radar'], fontsize=23, color='white')
-        param_labels = radar.draw_param_labels(ax=axs['radar'], fontsize=25, color='white')
-        axs['radar'].scatter(vertices1[:, 0], vertices1[:, 1],
-                             c='#00f2c1', edgecolors='#6d6c6d', marker='o', s=150, zorder=2)
-        axs['radar'].scatter(vertices2[:, 0], vertices2[:, 1],
-                             c='#d80499', edgecolors='#6d6c6d', marker='o', s=150, zorder=2)
-
-        title1_text = axs['title'].text(0.01, 0.65, player_name, fontsize=25, color='#01c49d',
-                                        fontproperties=robotto_bold.prop, ha='left', va='center')
-        title2_text = axs['title'].text(0.01, 0.25, player_club, fontsize=20,
-                                        fontproperties=robotto_thin.prop,
-                                        ha='left', va='center', color='#01c49d')
-        title3_text = axs['title'].text(0.99, 0.65, most_similar_player_name, fontsize=25,
-                                        fontproperties=robotto_bold.prop,
-                                        ha='right', va='center', color='#d80499')
-        title4_text = axs['title'].text(0.99, 0.25, most_similar_player_club, fontsize=20,
-                                        fontproperties=robotto_thin.prop,
-                                        ha='right', va='center', color='#d80499')
-        fig.set_facecolor('#121212')
-
+        fig, axs = grid(figheight=14, grid_height=0.915, title_height=0.06, endnote_height=0.025, title_space=0, endnote_space=0, grid_key='radar', axis=False)
+        radar.setup_axis(ax=axs['radar'], facecolor='black')
+        radar.draw_radar_compare(given_player_metrics, most_similar_player_metrics, ax=axs['radar'], kwargs_radar={'facecolor': '#00f2c1', 'alpha': 0.6}, kwargs_compare={'facecolor': '#d80499', 'alpha': 0.6})
         st.pyplot(fig)
     else:
-        st.write(f"No players found meeting the criteria.")
+        st.write("No players found meeting the criteria.")
