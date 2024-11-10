@@ -10,22 +10,28 @@ from mplsoccer.utils import FontManager
 
 dataf = pd.read_csv('Final FBRef 2023-2024.csv')
 
-
 def fix_encoding(text):
     return ftfy.fix_text(text)
-
 
 dataf['Player'] = dataf['Player'].apply(fix_encoding)
 dataf['Squad'] = dataf['Squad'].apply(fix_encoding)
 
+
+competition_options = dataf['Comp'].unique()
+selected_competition = st.selectbox("Select Competition", competition_options)
+
+
+dataf = dataf[dataf['Comp'] == selected_competition]
+
+
 dataf = dataf[~dataf['Pos'].str.contains('GK')]
 dataf = dataf[dataf['Age'] != 0]
+
 
 dataf['90s'] = dataf['Min'] / 90
 
 
 all_columns = [col for col in dataf.columns if col not in ['Player', 'Nation', 'Pos', 'Squad', 'Comp', 'Born', 'MP', 'Starts', 'Min']]
-
 
 templates = {
     'Poacher (FW)': [
