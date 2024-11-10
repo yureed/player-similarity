@@ -182,11 +182,15 @@ This utilizes **cosine similarity** and **only works for the selected columns**.
 **Data is from FBRef (From 23-24 Season) and credit to [Ben Griffis](https://x.com/BeGriffis), whose code I used to get the FBRef Data.**
 """)
 
-competition_options = dataf['Comp'].unique()
-selected_competition = st.selectbox("Select Competition", competition_options)
+
+competition_options = ['All Competitions'] + list(dataf['Comp'].unique())
+selected_competitions = st.multiselect("Select Competitions", competition_options, default='All Competitions')
 
 
-dataf = dataf[dataf['Comp'] == selected_competition]
+if 'All Competitions' in selected_competitions:
+    filtered_data = dataf 
+else:
+    filtered_data = dataf[dataf['Comp'].isin(selected_competitions)]
 
 
 player_options = [f"{row['Player']} ({row['Squad']})" for idx, row in dataf.iterrows()]
