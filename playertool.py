@@ -240,7 +240,7 @@ if st.button('Find Similar Players'):
         URL5 = ('https://raw.githubusercontent.com/google/fonts/main/apache/robotoslab/RobotoSlab%5Bwght%5D.ttf')
         robotto_bold = FontManager(URL5)
 
-        fig, axs = grid(figheight=14, grid_height=0.915, title_height=0.06, endnote_height=0.025, title_space=0
+        fig, axs = grid(figheight=14, grid_height=0.915, title_height=0.06, endnote_height=0.025, title_space=0)
  # Setting up the radar chart figure and drawing the radar
         fig, axs = grid(figheight=14, grid_height=0.915, title_height=0.06, endnote_height=0.025,
                         title_space=0, endnote_space=0, grid_key='radar', axis=False)
