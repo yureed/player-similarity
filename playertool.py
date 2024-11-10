@@ -146,8 +146,7 @@ templates = {
     ]
 }
 
-# Remove rows with empty 'Main Position'
-dataf = dataf.dropna(subset=['Main Position'])
+dataf = dataf[~dataf['Main Position'].str.strip().str.lower().isin(['attack', 'defense', 'midfield'])]
 
 # Calculate '90s' based on minutes played and add it as a new column
 dataf['90s'] = dataf['Min'] / 90
