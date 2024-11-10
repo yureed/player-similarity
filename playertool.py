@@ -257,3 +257,18 @@ elif tool_choice == "Scouting Tool":
         # Sort by normalized scores in descending order
         sorted_indices = np.argsort(normalized_scores)[::-1]
         return df, sorted_indices, normalized_scores
+    if st.sidebar.button('Find Players'):
+        df, sorted_indices, normalized_scores = find_weighted_similar_players(
+            selected_positions, min_90s, min_age, max_age, selected_columns, weights, filtered_data
+        )
+
+        if sorted_indices is not None:
+            st.write("Players based on scouting criteria:")
+            for i in range(min(10, len(sorted_indices))):
+                idx = sorted_indices[i]
+                score = normalized_scores[idx]
+                player_name = df.iloc[idx]['Player']
+                player_club = df.iloc[idx]['Squad']
+                st.write(f"{i+1}. {player_name} ({player_club}) - Score: {score:.2f}")
+        else:
+            st.write("No players found meeting the criteria.")
