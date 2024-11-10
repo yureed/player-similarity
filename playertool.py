@@ -20,7 +20,7 @@ URL5 = 'https://raw.githubusercontent.com/google/fonts/main/apache/robotoslab/Ro
 robotto_bold = FontManager(URL5)
 
 # Load data
-dataf = pd.read_csv('/mnt/data/Final FBRef 2024-2025.csv')
+dataf = pd.read_csv('Final FBRef 2024-2025.csv')
 
 # Fix encoding issues in player and squad names
 def fix_encoding(text):
