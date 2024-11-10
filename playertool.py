@@ -384,7 +384,6 @@ elif tool_choice == "Scouting Tool":
             st.write("No players found meeting the criteria.")
 
 elif tool_choice == "Analyze One Player":
-
     # Competition filter
     competition_options = ['All Competitions'] + list(dataf['Comp'].unique())
     selected_competitions = st.sidebar.multiselect("Select Competitions", competition_options, default='All Competitions')
@@ -426,34 +425,36 @@ elif tool_choice == "Analyze One Player":
 
         # Prepare data for radar chart
         params = selected_columns
-        player_metrics = player_data.iloc[0][selected_columns]
+        player_metrics = player_data.iloc[0][selected_columns].values
 
-        # Min and max for radar chart based on filtered dataset
+        # Define min and max values for each stat in radar chart
         low = [filtered_data[col].min() for col in selected_columns]
         high = [filtered_data[col].max() for col in selected_columns]
 
-        # Radar chart setup with previous settings
+        # Instantiate radar object with specified boundaries
         radar = Radar(params, low, high,
-                      lower_is_better=[],
-                      round_int=[False] * len(params),
+                      lower_is_better=[],  # specify any params where lower values are better
                       num_rings=4,
                       ring_width=1, center_circle_radius=1)
 
+        # Create a grid and draw radar chart
         fig, axs = grid(figheight=14, grid_height=0.915, title_height=0.06, endnote_height=0.025,
                         title_space=0, endnote_space=0, grid_key='radar', axis=False)
 
         radar.setup_axis(ax=axs['radar'], facecolor='black')
-        rings_inner = radar.draw_circles(ax=axs['radar'], facecolor='orange', edgecolor='black')
+        rings_inner = radar.draw_circles(ax=axs['radar'], facecolor='#ffb2b2', edgecolor='#fc5f5f')
         radar_output = radar.draw_radar(player_metrics, ax=axs['radar'],
                                         kwargs_radar={'facecolor': '#00f2c1', 'alpha': 0.6})
 
         range_labels = radar.draw_range_labels(ax=axs['radar'], fontsize=23, color='white')
         param_labels = radar.draw_param_labels(ax=axs['radar'], fontsize=25, color='white')
 
+        # Set title for radar chart
         title_text = axs['title'].text(0.5, 0.5, f"{player_name} ({player_club})", fontsize=25,
                                        fontproperties=robotto_bold.prop, color='white',
                                        ha='center', va='center')
         fig.set_facecolor('#121212')
 
+        # Display the radar chart
         st.pyplot(fig)
 
