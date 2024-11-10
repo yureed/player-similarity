@@ -347,7 +347,7 @@ elif tool_choice == "Analyze One Player":
     player_options = [f"{row['Player']} ({row['Squad']})" for idx, row in filtered_data.iterrows()]
     selected_player = st.sidebar.selectbox('Select Player', player_options)
     player_name, player_club = selected_player.split(' (')
-    player_club = player_club[:-1]  # Remove trailing ')'
+    player_club = player_club[:-1]
 
     # Age range and minimum 90s played filter
     selected_age_range = st.sidebar.slider('Select Age Range', int(filtered_data['Age'].min()), int(filtered_data['Age'].max()),
@@ -361,8 +361,6 @@ elif tool_choice == "Analyze One Player":
 
     # Apply all filters for selected player and criteria
     player_data = filtered_data[
-        (filtered_data['Player'] == player_name) &
-        (filtered_data['Squad'] == player_club) &
         (filtered_data['Age'] >= selected_age_range[0]) &
         (filtered_data['Age'] <= selected_age_range[1]) &
         (filtered_data['90s'] >= min_90s)
