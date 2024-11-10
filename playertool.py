@@ -19,7 +19,7 @@ URL1 = ('https://raw.githubusercontent.com/googlefonts/SourceSerifProGFVersion/m
             robotto_thin = FontManager(URL4)
             URL5 = ('https://raw.githubusercontent.com/google/fonts/main/apache/robotoslab/'
                     'RobotoSlab%5Bwght%5D.ttf')
-            robotto_bold = FontManager(URL5)
+robotto_bold = FontManager(URL5)
 
 dataf = pd.read_csv('Final FBRef 2023-2024.csv')
 
