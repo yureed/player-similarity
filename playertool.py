@@ -123,7 +123,6 @@ templates = {
         'Prog Carries', 'Carries To Pen Area', 'Prog Passes Rec'
     ]
 }
-# Adjust columns for per-90 calculations
 for column in all_columns:
     if column != '90s' and column != 'Age':
         dataf[column] = dataf[column] / dataf['90s']
@@ -148,7 +147,18 @@ min_age, max_age = st.sidebar.slider('Age Range', int(dataf['Age'].min()), int(d
 
 # Conditional logic based on tool choice
 if tool_choice == "Similarity Checker":
-    # Use unweighted similarity (no weights)
+    # Player selection for similarity checker
+    player_options = [f"{row['Player']} ({row['Squad']})" for idx, row in filtered_data.iterrows()]
+    selected_player = st.sidebar.selectbox('Select Player', player_options)
+    player_name, player_club = selected_player.split(' (')
+    player_club = player_club[:-1]  # Remove trailing ')'
+
+    # Template selection for similarity checker
+    template_options = list(templates.keys())
+    selected_template = st.sidebar.selectbox('Select Template', template_options)
+    selected_columns = templates[selected_template]
+
+    # Function to find similar players without weights
     def find_similar_players(player_name, player_club, positions, min_90s, min_age, max_age, selected_columns, dataf):
         if not ((dataf['Player'] == player_name) & (dataf['Squad'] == player_club)).any():
             return None, None
@@ -174,11 +184,6 @@ if tool_choice == "Similarity Checker":
         similar_players_indices = np.argsort(similarity_scores)[::-1]
 
         return df, similar_players_indices, similarity_scores
-
-    # Template selection for similarity checker
-    template_options = list(templates.keys())
-    selected_template = st.sidebar.selectbox('Select Template', template_options)
-    selected_columns = templates[selected_template]
 
     # Similarity Checker Output
     if st.sidebar.button('Find Similar Players'):
@@ -215,6 +220,7 @@ if tool_choice == "Similarity Checker":
             st.pyplot(fig)
         else:
             st.write("No players found meeting the criteria.")
+
 
 elif tool_choice == "Scouting Tool":
     # Scouting tool with weights and no player selection
