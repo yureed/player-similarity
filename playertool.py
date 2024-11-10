@@ -388,6 +388,7 @@ elif tool_choice == "Analyze One Player":
     competition_options = ['All Competitions'] + list(dataf['Comp'].unique())
     selected_competitions = st.sidebar.multiselect("Select Competitions", competition_options, default='All Competitions')
 
+    # Filter data based on competition selection
     if 'All Competitions' in selected_competitions:
         filtered_data = dataf
     else:
@@ -427,17 +428,17 @@ elif tool_choice == "Analyze One Player":
         params = selected_columns
         player_metrics = player_data.iloc[0][selected_columns].values
 
-        # Define min and max values for each stat in radar chart
-        low = [filtered_data[col].min() for col in selected_columns]
-        high = [filtered_data[col].max() for col in selected_columns]
+        # Calculate min and max for radar chart based on currently filtered data
+        low = [filtered_data[selected_columns].min()[col] for col in selected_columns]
+        high = [filtered_data[selected_columns].max()[col] for col in selected_columns]
 
-        # Instantiate radar object with specified boundaries
+        # Radar chart setup
         radar = Radar(params, low, high,
-                      lower_is_better=[],  # specify any params where lower values are better
+                      lower_is_better=[],
+                      round_int=[False] * len(params),
                       num_rings=4,
                       ring_width=1, center_circle_radius=1)
 
-        # Create a grid and draw radar chart
         fig, axs = grid(figheight=14, grid_height=0.915, title_height=0.06, endnote_height=0.025,
                         title_space=0, endnote_space=0, grid_key='radar', axis=False)
 
