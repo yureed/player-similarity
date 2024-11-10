@@ -385,6 +385,7 @@ elif tool_choice == "Scouting Tool":
 
 elif tool_choice == "Analyze One Player":
 
+    # Competition filter
     competition_options = ['All Competitions'] + list(dataf['Comp'].unique())
     selected_competitions = st.sidebar.multiselect("Select Competitions", competition_options, default='All Competitions')
 
@@ -393,28 +394,29 @@ elif tool_choice == "Analyze One Player":
     else:
         filtered_data = dataf[dataf['Comp'].isin(selected_competitions)]
 
+    # Player selection from filtered data
     player_options = [f"{row['Player']} ({row['Squad']})" for idx, row in filtered_data.iterrows()]
     selected_player = st.sidebar.selectbox('Select Player', player_options)
     player_name, player_club = selected_player.split(' (')
     player_club = player_club[:-1]  # Remove trailing ')'
 
+    # Age range and minimum 90s played filter
+    selected_age_range = st.sidebar.slider('Select Age Range', int(filtered_data['Age'].min()), int(filtered_data['Age'].max()),
+                                           (int(filtered_data['Age'].min()), int(filtered_data['Age'].max())))
+    min_90s = st.sidebar.slider('Minimum 90s played', int(filtered_data['90s'].min()), int(filtered_data['90s'].max()), int(filtered_data['90s'].min()))
 
-    selected_age_range = st.sidebar.slider('Select Age Range', int(dataf['Age'].min()), int(dataf['Age'].max()),
-                                           (int(dataf['Age'].min()), int(dataf['Age'].max())))
-    min_90s = st.sidebar.slider('Minimum 90s played', int(dataf['90s'].min()), int(dataf['90s'].max()), int(dataf['90s'].min()))
-
-    # Template selection and column customization
+    # Template and columns selection for radar chart
     template_options = list(templates.keys())
     selected_template = st.sidebar.selectbox('Select Template', template_options)
     selected_columns = st.sidebar.multiselect('Select Columns', all_columns, default=templates[selected_template])
 
-
-    player_data = dataf[
-        (dataf['Player'] == player_name) &
-        (dataf['Squad'] == player_club) &
-        (dataf['Age'] >= selected_age_range[0]) &
-        (dataf['Age'] <= selected_age_range[1]) &
-        (dataf['90s'] >= min_90s)
+    # Filtered data for selected player and criteria
+    player_data = filtered_data[
+        (filtered_data['Player'] == player_name) &
+        (filtered_data['Squad'] == player_club) &
+        (filtered_data['Age'] >= selected_age_range[0]) &
+        (filtered_data['Age'] <= selected_age_range[1]) &
+        (filtered_data['90s'] >= min_90s)
     ]
 
     if player_data.empty:
@@ -422,14 +424,15 @@ elif tool_choice == "Analyze One Player":
     else:
         st.write(f"Displaying radar chart for {player_name} ({player_club})")
 
+        # Prepare data for radar chart
         params = selected_columns
         player_metrics = player_data.iloc[0][selected_columns]
 
-        # Calculate min and max for selected columns across all players
-        low = [dataf[col].min() for col in selected_columns]
-        high = [dataf[col].max() for col in selected_columns]
+        # Min and max for radar chart based on filtered dataset
+        low = [filtered_data[col].min() for col in selected_columns]
+        high = [filtered_data[col].max() for col in selected_columns]
 
-        # Radar chart setup (using your old radar chart code)
+        # Radar chart setup with previous settings
         radar = Radar(params, low, high,
                       lower_is_better=[],
                       round_int=[False] * len(params),
@@ -453,3 +456,4 @@ elif tool_choice == "Analyze One Player":
         fig.set_facecolor('#121212')
 
         st.pyplot(fig)
+
