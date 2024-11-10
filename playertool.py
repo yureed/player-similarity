@@ -21,7 +21,7 @@ URL5 = ('https://raw.githubusercontent.com/google/fonts/main/apache/robotoslab/'
         'RobotoSlab%5Bwght%5D.ttf')
 robotto_bold = FontManager(URL5)
 
-dataf = pd.read_csv('Final FBRef 2023-2024.csv')
+dataf = pd.read_csv('Final FBRef 2024-2025.csv')
 
 def fix_encoding(text):
     return ftfy.fix_text(text)
