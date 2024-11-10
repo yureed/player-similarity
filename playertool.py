@@ -231,7 +231,7 @@ elif tool_choice == "Scouting Tool":
     st.sidebar.write("### Assign weights to each metric")
     for col in selected_columns:
         weights[col] = st.sidebar.slider(f"Weight for {col}", min_value=0.0, max_value=1.0, value=0.5)
-            def find_weighted_similar_players(selected_positions, min_90s, min_age, max_age, selected_columns, weights, dataf):
+    def find_weighted_similar_players(selected_positions, min_90s, min_age, max_age, selected_columns, weights, dataf):
         df = dataf[dataf['Pos'].apply(lambda x: any(pos in x for pos in selected_positions)) &
                    (dataf['90s'] >= min_90s) &
                    (dataf['Age'] >= min_age) &
