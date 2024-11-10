@@ -412,8 +412,6 @@ elif tool_choice == "Analyze One Player":
 
     # Filtered data for selected player and criteria
     player_data = filtered_data[
-        (filtered_data['Player'] == player_name) &
-        (filtered_data['Squad'] == player_club) &
         (filtered_data['Age'] >= selected_age_range[0]) &
         (filtered_data['Age'] <= selected_age_range[1]) &
         (filtered_data['90s'] >= min_90s)
