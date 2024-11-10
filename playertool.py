@@ -140,12 +140,7 @@ if 'All Competitions' in selected_competitions:
 else:
     filtered_data = dataf[dataf['Comp'].isin(selected_competitions)]
 
-# Sidebar for player and filter selection
-player_options = [f"{row['Player']} ({row['Squad']})" for idx, row in filtered_data.iterrows()]
-selected_player = st.sidebar.selectbox('Select Player', player_options)
-player_name, player_club = selected_player.split(' (')
-player_club = player_club[:-1]
-
+# Position, age, and minutes played filters
 positions = ['DF', 'MF', 'FW']
 selected_positions = st.sidebar.multiselect('Select Positions', positions, default=positions)
 min_90s = st.sidebar.slider('Minimum 90s played', int(dataf['90s'].min()), int(dataf['90s'].max()), int(dataf['90s'].min()))
@@ -222,7 +217,7 @@ if tool_choice == "Similarity Checker":
             st.write("No players found meeting the criteria.")
 
 elif tool_choice == "Scouting Tool":
-    # Scouting tool with weights
+    # Scouting tool with weights and no player selection
     selected_template = st.sidebar.selectbox('Select Template', list(templates.keys()))
     selected_columns = st.sidebar.multiselect('Select Columns', all_columns, default=templates[selected_template])
 
@@ -231,7 +226,9 @@ elif tool_choice == "Scouting Tool":
     st.sidebar.write("### Assign weights to each metric")
     for col in selected_columns:
         weights[col] = st.sidebar.slider(f"Weight for {col}", min_value=0.0, max_value=1.0, value=0.5)
-    def find_weighted_similar_players(selected_positions, min_90s, min_age, max_age, selected_columns, weights, dataf):
+
+    # Scouting Tool Function: Find top players based on criteria
+    def find_weighted_top_players(selected_positions, min_90s, min_age, max_age, selected_columns, weights, dataf):
         df = dataf[dataf['Pos'].apply(lambda x: any(pos in x for pos in selected_positions)) &
                    (dataf['90s'] >= min_90s) &
                    (dataf['Age'] >= min_age) &
@@ -257,13 +254,15 @@ elif tool_choice == "Scouting Tool":
         # Sort by normalized scores in descending order
         sorted_indices = np.argsort(normalized_scores)[::-1]
         return df, sorted_indices, normalized_scores
-    if st.sidebar.button('Find Players'):
-        df, sorted_indices, normalized_scores = find_weighted_similar_players(
+
+    # Output for Scouting Tool: Display top 10 players
+    if st.sidebar.button('Find Top Players'):
+        df, sorted_indices, normalized_scores = find_weighted_top_players(
             selected_positions, min_90s, min_age, max_age, selected_columns, weights, filtered_data
         )
 
         if sorted_indices is not None:
-            st.write("Players based on scouting criteria:")
+            st.write("Top 10 Players based on scouting criteria:")
             for i in range(min(10, len(sorted_indices))):
                 idx = sorted_indices[i]
                 score = normalized_scores[idx]
