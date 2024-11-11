@@ -157,7 +157,7 @@ for column in dataf.columns:
         dataf[column] = dataf[column] / dataf['90s']
 
 # Adjusting the tool to use 'Main Position' instead of 'Pos'
-tool_choice = st.sidebar.radio("Choose Tool", options=["Similarity Checker", "Scouting Tool", "Analyze One Player"])
+tool_choice = st.sidebar.radio("Choose Tool", options=["Similarity Checker", "Scouting Tool"])
 
 # Main logic, assuming templates were already adjusted
 if tool_choice == "Similarity Checker":
