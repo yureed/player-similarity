@@ -185,6 +185,7 @@ if tool_choice == "Similarity Checker":
     template_options = list(templates.keys())
     selected_template = st.sidebar.selectbox('Select Template', template_options)
     selected_columns = templates[selected_template]
+    selected_columns = st.sidebar.multiselect('Select Columns', selected_columns, default=templates[selected_template])
 
     # Function to find similar players
     def find_similar_players(player_name, player_club, positions, min_90s, min_age, max_age, selected_columns, dataf):
@@ -227,6 +228,41 @@ if tool_choice == "Similarity Checker":
                 similar_player_name = df.iloc[similar_player_index]['Player']
                 similar_player_club = df.iloc[similar_player_index]['Squad']
                 st.write(f"{i+1}. {similar_player_name} ({similar_player_club}) (Similarity Score: {similarity_score:.3f})")
+             # Get the most similar player (the first in the list)
+            most_similar_player_index = similar_players_indices[0]
+            most_similar_player_score = similarity_scores[most_similar_player_index]
+            most_similar_player_name = df.iloc[most_similar_player_index]['Player']
+            most_similar_player_club = df.iloc[most_similar_player_index]['Squad']
+            params = selected_columns
+
+            # Calculate min and max for selected columns
+            low = [df[col].min() for col in selected_columns]
+            high = [df[col].max() for col in selected_columns]
+
+            # Radar chart setup
+            radar = Radar(params, low, high,
+                          lower_is_better=[],
+                          round_int=[False] * len(params),
+                          num_rings=4,
+                          ring_width=1, center_circle_radius=1)
+
+            fig, axs = grid(figheight=14, grid_height=0.915, title_height=0.06, endnote_height=0.025,
+                            title_space=0, endnote_space=0, grid_key='radar', axis=False)
+
+            radar.setup_axis(ax=axs['radar'], facecolor='black')
+            rings_inner = radar.draw_circles(ax=axs['radar'], facecolor='orange', edgecolor='black')
+            radar_output = radar.draw_radar(top_player_metrics, ax=axs['radar'],
+                                            kwargs_radar={'facecolor': '#00f2c1', 'alpha': 0.6})
+
+            range_labels = radar.draw_range_labels(ax=axs['radar'], fontsize=23, color='white')
+            param_labels = radar.draw_param_labels(ax=axs['radar'], fontsize=25, color='white')
+
+            title_text = axs['title'].text(0.5, 0.5, f"{most_similar_player_score} ({most_similar_player_club})", fontsize=25,
+                                           fontproperties=robotto_bold.prop, color='white',
+                                           ha='center', va='center')
+            fig.set_facecolor('#121212')
+
+            st.pyplot(fig)
 elif tool_choice == "Scouting Tool":
     # Filters and options for Scouting Tool
     competition_options = ['All Competitions'] + list(dataf['Comp'].unique())
