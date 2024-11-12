@@ -317,54 +317,75 @@ elif tool_choice == "Scouting Tool":
         sorted_indices = np.argsort(normalized_scores)[::-1]
         return df, sorted_indices, normalized_scores
 
+        # Function to calculate percentiles
+    def calculate_percentiles(df, columns):
+        percentiles = df[columns].rank(pct=True).multiply(100).round(1)
+        return percentiles
+    
+    # Function to generate pizza plot for a selected player
+    def display_pizza_plot(player_name, player_club, df, columns, percentiles):
+        player_data = df[(df['Player'] == player_name) & (df['Squad'] == player_club)].iloc[0]
+        player_percentiles = percentiles[(df['Player'] == player_name) & (df['Squad'] == player_club)].iloc[0]
+        
+        # Create the pizza plot with dark theme
+        baker = PyPizza(
+            params=columns,
+            background_color="#121212",  # Dark background
+            straight_line_color="#222222",  # Darker lines
+            straight_line_lw=1,
+            last_circle_lw=1.5,
+            last_circle_color="#121212",
+            other_circle_lw=1,
+            other_circle_color="#222222",
+        )
+    
+        # Create the pizza plot figure
+        fig, ax = baker.make_pizza(
+            player_percentiles.values,  # Data values
+            figsize=(8, 8),
+            color_blank_space="same",
+            slice_colors=["#00f2c1"] * len(columns),  # Color for slices
+            value_colors=["white"] * len(columns),
+            value_bck_colors=["#121212"] * len(columns),
+            kwargs_slices=dict(edgecolor="#222222", linewidth=1),
+            kwargs_params=dict(color="white", fontsize=12),
+            kwargs_values=dict(color="white", fontsize=11, fontweight="bold", zorder=3),
+        )
+    
+        # Add title
+        fig.text(0.5, 0.97, f"{player_name} ({player_club})", size=16, color="white", ha="center", fontweight="bold")
+        
+        # Display the plot in Streamlit
+        st.pyplot(fig)
+    
     # Display Top Players
     if st.sidebar.button('Find Top Players'):
         df, sorted_indices, normalized_scores = find_weighted_top_players(
             selected_positions, min_90s, min_age, max_age, selected_columns, weights, filtered_data
         )
-
+        
         if sorted_indices is not None:
             st.write("Top 10 Players based on scouting criteria:")
+            
+            # Calculate percentiles for the filtered data
+            percentiles = calculate_percentiles(df, selected_columns)
+            
             for i in range(min(10, len(sorted_indices))):
                 idx = sorted_indices[i]
                 score = normalized_scores[idx]
                 player_name = df.iloc[idx]['Player']
                 player_club = df.iloc[idx]['Squad']
                 st.write(f"{i+1}. {player_name} ({player_club}) - Score: {score:.2f}")
-            # Radar chart for the top player
+    
+                # Button to view pizza plot for the player
+                if st.button(f"View Pizza Plot for {player_name}", key=f"pizza_{i}"):
+                    display_pizza_plot(player_name, player_club, df, selected_columns, percentiles)
+                    
+            # Option to view the top player's pizza plot by default
             top_player_name = df.iloc[sorted_indices[0]]['Player']
             top_player_club = df.iloc[sorted_indices[0]]['Squad']
-            top_player_metrics = df.iloc[sorted_indices[0]][selected_columns]
-
-            params = selected_columns
-
-            # Calculate min and max for selected columns
-            low = [df[col].min() for col in selected_columns]
-            high = [df[col].max() for col in selected_columns]
-
-            # Radar chart setup
-            radar = Radar(params, low, high,
-                          lower_is_better=[],
-                          round_int=[False] * len(params),
-                          num_rings=4,
-                          ring_width=1, center_circle_radius=1)
-
-            fig, axs = grid(figheight=14, grid_height=0.915, title_height=0.06, endnote_height=0.025,
-                            title_space=0, endnote_space=0, grid_key='radar', axis=False)
-
-            radar.setup_axis(ax=axs['radar'], facecolor='black')
-            rings_inner = radar.draw_circles(ax=axs['radar'], facecolor='orange', edgecolor='black')
-            radar_output = radar.draw_radar(top_player_metrics, ax=axs['radar'],
-                                            kwargs_radar={'facecolor': '#00f2c1', 'alpha': 0.6})
-
-            range_labels = radar.draw_range_labels(ax=axs['radar'], fontsize=23, color='white')
-            param_labels = radar.draw_param_labels(ax=axs['radar'], fontsize=25, color='white')
-
-            title_text = axs['title'].text(0.5, 0.5, f"{top_player_name} ({top_player_club})", fontsize=25,
-                                           fontproperties=robotto_bold.prop, color='white',
-                                           ha='center', va='center')
-            fig.set_facecolor('#121212')
-
-            st.pyplot(fig)
+            
+            st.write(f"### Pizza Plot for Top Player: {top_player_name} ({top_player_club})")
+            display_pizza_plot(top_player_name, top_player_club, df, selected_columns, percentiles)
         else:
             st.write("No players found meeting the criteria.")
