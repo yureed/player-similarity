@@ -349,11 +349,7 @@ elif tool_choice == "Scouting Tool":
             kwargs_values=dict(color="white", fontsize=11, fontweight="bold", zorder=3),
         )
         
-        # Optionally add threshold indicators
-        if thresholds:
-            for i, value in enumerate(thresholds):
-                ax.plot([0, np.cos(i * 2 * np.pi / len(columns)) * value],
-                        [0, np.sin(i * 2 * np.pi / len(columns)) * value], color="red", linewidth=0.8)
+
         
         fig.text(0.5, 0.97, f"{player_name} ({player_club})", size=16, color="white", ha="center", fontweight="bold")
         st.pyplot(fig)
