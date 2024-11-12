@@ -292,6 +292,8 @@ elif tool_choice == "Scouting Tool":
     st.sidebar.write("### Assign weights to each metric")
     for col in selected_columns:
         weights[col] = st.sidebar.slider(f"Weight for {col}", 0.0, 1.0, 0.5)
+    def calculate_percentiles(df, columns):
+        return df[columns].rank(pct=True).multiply(100)
 
     # Function to calculate weighted scores using PCA and Grid Search for weight tuning
     def calculate_pca_weighted_scores(df, columns, weights):
@@ -369,6 +371,9 @@ elif tool_choice == "Scouting Tool":
         ].dropna(subset=selected_columns)
         
         if not filtered_df.empty:
+            # Calculate percentiles for the selected columns
+            percentiles = calculate_percentiles(filtered_df, selected_columns)
+            
             # Clustering players based on selected metrics
             filtered_df = cluster_players(filtered_df, selected_columns)
             
