@@ -49,108 +49,43 @@ adjusted_columns = [col for col in dataf.columns if 'pAdj' in col]
 selected_columns = per90_columns + adjusted_columns
 
 templates = {
-    'Poacher (FW)': [
-        'GoalsPer90', 'ShotsPer90', 'SoTPer90', 'G/ShPer90', 
-        'G/SoTPer90', 'PKPer90', 'xGPer90', 'npxGPer90', 
-        'G-xGPer90', 'npG-xGPer90', 'TouchesPer90', 'AttPenTouchPer90', 
-        'ProgPassesRecPer90', 'pAdjDrbTklPer90'
-    ],
-    'Complete Forward (FW)': [
-        'GoalsPer90', 'AssistsPer90', 'ShotsPer90', 'SoTPer90', 
-        'G/ShPer90', 'G/SoTPer90', 'PKPer90', 'xGPer90', 
-        'npxGPer90', 'PassesCompletedPer90', 'PassesAttemptedPer90', 
-        'KeyPassesPer90', 'SuccDrbPer90', 'TouchesPer90', 'AttPenTouchPer90'
-    ],
-    'Advanced Forward (FW)': [
-        'GoalsPer90', 'ShotsPer90', 'SoTPer90', 'G/ShPer90', 
-        'G/SoTPer90', 'PKPer90', 'xGPer90', 'npxGPer90', 
-        'G-xGPer90', 'npG-xGPer90', 'SuccDrbPer90', 'TouchesPer90', 
-        'AttPenTouchPer90', 'ProgPassesRecPer90'
-    ],
-    'Inside Forward (FW)': [
-        'GoalsPer90', 'ShotsPer90', 'SoTPer90', 'G/ShPer90', 
-        'G/SoTPer90', 'xGPer90', 'npxGPer90', 'AssistsPer90', 
-        'SuccDrbPer90', 'TouchesPer90', 'AttPenTouchPer90', 'ProgPassesRecPer90', 
-        'KeyPassesPer90'
+    'Striker (FW)': [
+        'GoalsPer90', 'ShotsPer90', 'SoTPer90', 'xGPer90', 
+        'npxGPer90', 'G/ShPer90', 'TouchesPer90', 'AttPenTouchPer90', 
+        'ProgPassesRecPer90', 'SuccDrbPer90'
     ],
     'Winger (FW)': [
-        'AssistsPer90', 'CrsPer90', 'SuccDrbPer90', 'TouchesPer90', 
-        'AttPenTouchPer90', 'KeyPassesPer90', 'PassesCompletedPer90', 
-        'PassesAttemptedPer90', 'CrsPenAreaCmpPer90', 'ProgPassesPer90', 
-        'PenAreaCmpPer90'
+        'AssistsPer90', 'GoalsPer90', 'ShotsPer90', 'CrsPer90', 
+        'SuccDrbPer90', 'TouchesPer90', 'KeyPassesPer90', 
+        'AttPenTouchPer90', 'ProgPassesRecPer90', 'ProgCarriesPer90'
     ],
-    'Box-to-Box Midfielder (MF)': [
+    'Attacking Midfielder (MF)': [
+        'AssistsPer90', 'GoalsPer90', 'KeyPassesPer90', 'PassesCompletedPer90', 
+        'PassesAttemptedPer90', 'SuccDrbPer90', 'TouchesPer90', 
+        'ProgPassesPer90', 'ProgCarriesPer90', 'CarriesToFinalThirdPer90'
+    ],
+    'Central Midfielder (MF)': [
         'GoalsPer90', 'AssistsPer90', 'PassesCompletedPer90', 
         'PassesAttemptedPer90', 'KeyPassesPer90', 'SuccDrbPer90', 
-        'TklPer90', 'IntPer90', 'TouchesPer90', 'ProgPassesPer90', 
-        'ProgCarriesPer90', 'CarriesToFinalThirdPer90'
-    ],
-    'Deep-Lying Playmaker (MF)': [
-        'PassesCompletedPer90', 'PassesAttemptedPer90', 'KeyPassesPer90', 
-        'TouchesPer90', 'ProgPassesPer90', 'SwitchesPer90', 
-        'PenAreaCmpPer90', 'SuccDrbPer90', 'IntPer90', 'TklPer90'
-    ],
-    'Advanced Playmaker (MF)': [
-        'AssistsPer90', 'KeyPassesPer90', 'PassesCompletedPer90', 
-        'PassesAttemptedPer90', 'SuccDrbPer90', 'TouchesPer90', 
-        'ProgPassesPer90', 'PenAreaCmpPer90', 'ProgCarriesPer90', 
-        'CarriesToFinalThirdPer90'
+        'TklPer90', 'IntPer90', 'TouchesPer90', 'ProgPassesPer90'
     ],
     'Defensive Midfielder (MF)': [
         'TklPer90', 'IntPer90', 'PassesCompletedPer90', 
         'PassesAttemptedPer90', 'TouchesPer90', 'BlocksPer90', 
         'ClrPer90', 'RecovPer90', 'ProgPassesPer90', 'ProgCarriesPer90'
     ],
-    'Roaming Playmaker (MF)': [
-        'AssistsPer90', 'KeyPassesPer90', 'PassesCompletedPer90', 
-        'PassesAttemptedPer90', 'SuccDrbPer90', 'TouchesPer90', 
-        'ProgPassesPer90', 'ProgCarriesPer90', 'CarriesToFinalThirdPer90', 
-        'CarriesToPenAreaPer90'
-    ],
-    'Wing-Back (DF)': [
+    'Full-Back (DF)': [
         'AssistsPer90', 'CrsPer90', 'SuccDrbPer90', 'TouchesPer90', 
         'TklPer90', 'IntPer90', 'ClrPer90', 'PassesCompletedPer90', 
-        'PassesAttemptedPer90', 'KeyPassesPer90', 'CrsPenAreaCmpPer90', 
-        'ProgPassesPer90'
+        'ProgPassesPer90', 'AttPenTouchPer90'
     ],
-    'Inverted Full-Back (DF)': [
-        'PassesCompletedPer90', 'PassesAttemptedPer90', 'KeyPassesPer90', 
-        'SuccDrbPer90', 'TouchesPer90', 'TklPer90', 'IntPer90', 
-        'ProgPassesPer90', 'SwitchesPer90'
-    ],
-    'Ball-Playing Defender (DF)': [
-        'PassesCompletedPer90', 'PassesAttemptedPer90', 'KeyPassesPer90', 
-        'SuccDrbPer90', 'TouchesPer90', 'TklPer90', 'IntPer90', 
-        'ClrPer90', 'BlocksPer90', 'RecovPer90', 'ProgPassesPer90'
-    ],
-    'No-Nonsense Centre-Back (DF)': [
+    'Center-Back (DF)': [
         'TklPer90', 'IntPer90', 'ClrPer90', 'BlocksPer90', 
-        'RecovPer90', 'AerialWinsPer90', 'AerialLossPer90', 'PassesCompletedPer90'
-    ],
-    'Libero (DF)': [
-        'TklPer90', 'IntPer90', 'PassesCompletedPer90', 
-        'PassesAttemptedPer90', 'KeyPassesPer90', 'SuccDrbPer90', 
-        'TouchesPer90', 'ProgPassesPer90', 'ClrPer90', 'BlocksPer90', 
-        'RecovPer90'
-    ],
-    'Segundo Volante (MF)': [
-        'GoalsPer90', 'AssistsPer90', 'PassesCompletedPer90', 
-        'PassesAttemptedPer90', 'KeyPassesPer90', 'SuccDrbPer90', 
-        'TouchesPer90', 'TklPer90', 'IntPer90', 'ProgPassesPer90', 
-        'ProgCarriesPer90'
-    ],
-    'Mezzala (MF)': [
-        'AssistsPer90', 'GoalsPer90', 'KeyPassesPer90', 'PassesCompletedPer90', 
-        'PassesAttemptedPer90', 'SuccDrbPer90', 'TouchesPer90', 
-        'ProgPassesPer90', 'ProgCarriesPer90', 'CarriesToFinalThirdPer90'
-    ],
-    'False Nine (FW)': [
-        'AssistsPer90', 'GoalsPer90', 'KeyPassesPer90', 'PassesCompletedPer90', 
-        'PassesAttemptedPer90', 'SuccDrbPer90', 'TouchesPer90', 
-        'ProgPassesPer90', 'ProgCarriesPer90', 'CarriesToPenAreaPer90', 
-        'ProgPassesRecPer90'
+        'RecovPer90', 'AerialWinsPer90', 'AerialLossPer90', 
+        'PassesCompletedPer90', 'TouchesPer90', 'ProgPassesPer90'
     ]
 }
+
 
 dataf = dataf[~dataf['Main Position'].str.strip().str.lower().isin(['attack', 'defence', 'midfield','goalkeeper'])]
 
