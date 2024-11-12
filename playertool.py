@@ -318,7 +318,9 @@ elif tool_choice == "Scouting Tool":
         sorted_indices = np.argsort(normalized_scores)[::-1]
         return df, sorted_indices, normalized_scores
 
-        # Function to calculate percentiles
+        from mplsoccer import PyPizza
+
+    # Function to calculate percentiles
     def calculate_percentiles(df, columns):
         percentiles = df[columns].rank(pct=True).multiply(100).round(1)
         return percentiles
@@ -359,6 +361,10 @@ elif tool_choice == "Scouting Tool":
         # Display the plot in Streamlit
         st.pyplot(fig)
     
+    # Ensure session state is initialized for selected player
+    if 'selected_player_index' not in st.session_state:
+        st.session_state.selected_player_index = 0
+    
     # Display Top Players
     if st.sidebar.button('Find Top Players'):
         df, sorted_indices, normalized_scores = find_weighted_top_players(
@@ -378,15 +384,18 @@ elif tool_choice == "Scouting Tool":
                 player_club = df.iloc[idx]['Squad']
                 st.write(f"{i+1}. {player_name} ({player_club}) - Score: {score:.2f}")
     
-                # Button to view pizza plot for the player
+                # Button to select player for pizza plot
                 if st.button(f"View Pizza Plot for {player_name}", key=f"pizza_{i}"):
-                    display_pizza_plot(player_name, player_club, df, selected_columns, percentiles)
+                    # Update the selected player index in session state
+                    st.session_state.selected_player_index = idx
                     
-            # Option to view the top player's pizza plot by default
-            top_player_name = df.iloc[sorted_indices[0]]['Player']
-            top_player_club = df.iloc[sorted_indices[0]]['Squad']
+            # Retrieve the player details using the selected index
+            selected_idx = st.session_state.selected_player_index
+            selected_player_name = df.iloc[selected_idx]['Player']
+            selected_player_club = df.iloc[selected_idx]['Squad']
             
-            st.write(f"### Pizza Plot for Top Player: {top_player_name} ({top_player_club})")
-            display_pizza_plot(top_player_name, top_player_club, df, selected_columns, percentiles)
+            # Display the pizza plot for the currently selected player
+            st.write(f"### Pizza Plot for Selected Player: {selected_player_name} ({selected_player_club})")
+            display_pizza_plot(selected_player_name, selected_player_club, df, selected_columns, percentiles)
         else:
             st.write("No players found meeting the criteria.")
