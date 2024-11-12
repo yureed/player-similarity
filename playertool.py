@@ -395,7 +395,7 @@ elif tool_choice == "Scouting Tool":
         
         # Display player name and club at the top
         fig.text(0.5, 0.97, f"{player_name} ({player_club})", size=16, color="white", ha="center", fontweight="bold")
-        plt.show()
+        st.pyplot(fig)
 
     
     # Main function to find top players
