@@ -301,7 +301,7 @@ elif tool_choice == "Scouting Tool":
         return df[columns].rank(pct=True).multiply(100).round()  # Added rounding here
 
     # Function to calculate weighted scores using PCA and Grid Search for weight tuning
-   def calculate_pca_weighted_scores(df, columns, weights):
+    def calculate_pca_weighted_scores(df, columns, weights):
         scaler = StandardScaler()
         metrics_data_scaled = scaler.fit_transform(df[columns])
         
