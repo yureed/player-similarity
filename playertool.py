@@ -8,6 +8,8 @@ from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
 from mplsoccer import Radar, grid
+from sklearn.metrics import silhouette_score
+
 from mplsoccer import PyPizza
 from mplsoccer.utils import FontManager
 
@@ -299,29 +301,40 @@ elif tool_choice == "Scouting Tool":
         return df[columns].rank(pct=True).multiply(100).round()  # Added rounding here
 
     # Function to calculate weighted scores using PCA and Grid Search for weight tuning
-    def calculate_pca_weighted_scores(df, columns, weights):
+   def calculate_pca_weighted_scores(df, columns, weights):
         scaler = StandardScaler()
         metrics_data_scaled = scaler.fit_transform(df[columns])
         
         # Dimensionality reduction via PCA, retaining components explaining 95% variance
         pca = PCA(n_components=0.95)
         pca_data = pca.fit_transform(metrics_data_scaled)
-    
-        # Weighted PCA scores
-        weighted_pca_scores = pca_data @ weights[:pca_data.shape[1]]  # Trim weights to PCA components
-    
-        # Normalize scores for easy comparison
+        
+        # Apply weights to the principal components
+        weights_trimmed = weights[:pca_data.shape[1]]
+        weighted_pca_scores = np.dot(pca_data, weights_trimmed)
+        
+        # Normalize the weighted PCA scores
         min_score, max_score = weighted_pca_scores.min(), weighted_pca_scores.max()
-        normalized_scores = 100 * (weighted_pca_scores - min_score) / (max_score - min_score) if max_score != min_score else weighted_pca_scores
+        normalized_scores = (weighted_pca_scores - min_score) / (max_score - min_score) * 100 if max_score != min_score else weighted_pca_scores
         
         return normalized_scores
     
     # Function for clustering players by similarity before ranking
-    def cluster_players(df, columns, n_clusters=5):
+    def cluster_players(df, columns):
         scaler = StandardScaler()
         metrics_data_scaled = scaler.fit_transform(df[columns])
         
-        kmeans = KMeans(n_clusters=n_clusters, random_state=42)
+        # Identify optimal number of clusters based on Silhouette Score
+        best_k, best_score = 2, -1
+        for k in range(2, 10):  # Range of clusters to try
+            kmeans = KMeans(n_clusters=k, random_state=42)
+            labels = kmeans.fit_predict(metrics_data_scaled)
+            score = silhouette_score(metrics_data_scaled, labels)
+            if score > best_score:
+                best_k, best_score = k, score
+        
+        # Final clustering with optimal k
+        kmeans = KMeans(n_clusters=best_k, random_state=42)
         df['Cluster'] = kmeans.fit_predict(metrics_data_scaled)
         return df
     
