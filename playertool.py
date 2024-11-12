@@ -302,23 +302,29 @@ elif tool_choice == "Scouting Tool":
 
     # Function to calculate weighted scores using PCA and Grid Search for weight tuning
     def calculate_pca_weighted_scores(df, columns, weights):
+        # Rescale weights to sum to 1
+        weights = np.array(weights)
+        weights /= weights.sum()
+        
+        # Apply weights directly to scaled metrics before PCA
         scaler = StandardScaler()
         metrics_data_scaled = scaler.fit_transform(df[columns])
+        weighted_metrics = metrics_data_scaled * weights  # Element-wise multiplication
         
-        # Dimensionality reduction via PCA, retaining components explaining 95% variance
+        # Perform PCA on weighted data
         pca = PCA(n_components=0.95)
-        pca_data = pca.fit_transform(metrics_data_scaled)
+        pca_data = pca.fit_transform(weighted_metrics)
         
-        # Apply weights to the principal components
-        weights_trimmed = weights[:pca_data.shape[1]]
-        weighted_pca_scores = np.dot(pca_data, weights_trimmed)
+        # Calculate final scores based on PCA components
+        pca_weights = np.ones(pca_data.shape[1])  # Equal weights for PCA components
+        weighted_pca_scores = np.dot(pca_data, pca_weights)
         
-        # Normalize the weighted PCA scores
+        # Normalize scores for comparison
         min_score, max_score = weighted_pca_scores.min(), weighted_pca_scores.max()
         normalized_scores = (weighted_pca_scores - min_score) / (max_score - min_score) * 100 if max_score != min_score else weighted_pca_scores
         
         return normalized_scores
-    
+        
     # Function for clustering players by similarity before ranking
     def cluster_players(df, columns):
         scaler = StandardScaler()
@@ -340,12 +346,20 @@ elif tool_choice == "Scouting Tool":
     
     # Updated display function for the pizza plot with threshold lines
     def display_pizza_plot(player_name, player_club, df, columns, percentiles, thresholds=None):
-        player_percentiles = percentiles[(df['Player'] == player_name) & (df['Squad'] == player_club)].iloc[0].round()  # Rounding percentiles here
+        # Shorten or abbreviate longer labels if necessary
+        short_columns = [col[:10] + '...' if len(col) > 10 else col for col in columns]
         
+        # Adjust font size based on length of labels
+        font_size = 10 if max(len(col) for col in short_columns) > 10 else 12
+        
+        # Get player percentiles
+        player_percentiles = percentiles[(df['Player'] == player_name) & (df['Squad'] == player_club)].iloc[0].round()
+        
+        # Create pizza plot with customized label formatting
         baker = PyPizza(
-            params=columns,
-            background_color="#121212",  
-            straight_line_color="#222222",  
+            params=short_columns,
+            background_color="#121212",
+            straight_line_color="#222222",
             straight_line_lw=1,
             last_circle_lw=1.5,
             last_circle_color="#121212",
@@ -354,19 +368,21 @@ elif tool_choice == "Scouting Tool":
         )
         
         fig, ax = baker.make_pizza(
-            player_percentiles.values,  
+            player_percentiles.values,
             figsize=(8, 8),
             color_blank_space="same",
-            slice_colors=["#00f2c1"] * len(columns),  
-            value_colors=["white"] * len(columns),
-            value_bck_colors=["#121212"] * len(columns),
+            slice_colors=["#00f2c1"] * len(short_columns),
+            value_colors=["white"] * len(short_columns),
+            value_bck_colors=["#121212"] * len(short_columns),
             kwargs_slices=dict(edgecolor="#222222", linewidth=1),
-            kwargs_params=dict(color="white", fontsize=12),
+            kwargs_params=dict(color="white", fontsize=font_size, rotation=45),  # Rotate labels if needed
             kwargs_values=dict(color="white", fontsize=11, fontweight="bold", zorder=3),
         )
         
+        # Display player name and club at the top
         fig.text(0.5, 0.97, f"{player_name} ({player_club})", size=16, color="white", ha="center", fontweight="bold")
-        st.pyplot(fig)
+        plt.show()
+
     
     # Main function to find top players
     if st.sidebar.button('Find Top Players'):
