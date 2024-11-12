@@ -295,6 +295,8 @@ elif tool_choice == "Scouting Tool":
     for col in selected_columns:
         if col not in weights:
             weights[col] = st.sidebar.slider(f"Weight for {col}", 0.0, 1.0, 0.5)
+    def calculate_percentiles(df, columns):
+        return df[columns].rank(pct=True).multiply(100)
 
     # Function to calculate weighted scores using PCA and Grid Search for weight tuning
     def calculate_pca_weighted_scores(df, columns, weights):
