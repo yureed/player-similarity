@@ -174,8 +174,14 @@ if tool_choice == "Similarity Checker":
         filtered_data = dataf
     else:
         filtered_data = dataf[dataf['Comp'].isin(selected_competitions)]
-    all_players = dataf['Player'].unique().tolist()  # List of all players
-    excluded_players = st.sidebar.multiselect("Exclude Players", all_players, default=[])
+    player_options = [f"{row['Player']} ({row['Squad']})" for idx, row in filtered_data.iterrows()]
+    excluded_players = st.sidebar.multiselect("Exclude Players", player_options, default=[])
+    
+    # Parse the selected player options to get just the player names and club names
+    excluded_players_parsed = [(option.split(" (")[0], option.split(" (")[1][:-1]) for option in excluded_players]
+    
+    # Apply exclusion filter by checking both player name and club
+    filtered_data = filtered_data[~filtered_data.apply(lambda row: (row['Player'], row['Squad']) in excluded_players_parsed, axis=1)]
     
     # Apply the filter to exclude selected players
     filtered_data = filtered_data[~filtered_data['Player'].isin(excluded_players)]
@@ -284,8 +290,14 @@ elif tool_choice == "Scouting Tool":
         filtered_data = dataf
     else:
         filtered_data = dataf[dataf['Comp'].isin(selected_competitions)]
-    all_players = dataf['Player'].unique().tolist()  # List of all players
-    excluded_players = st.sidebar.multiselect("Exclude Players", all_players, default=[])
+    player_options = [f"{row['Player']} ({row['Squad']})" for idx, row in filtered_data.iterrows()]
+    excluded_players = st.sidebar.multiselect("Exclude Players", player_options, default=[])
+    
+    # Parse the selected player options to get just the player names and club names
+    excluded_players_parsed = [(option.split(" (")[0], option.split(" (")[1][:-1]) for option in excluded_players]
+    
+    # Apply exclusion filter by checking both player name and club
+    filtered_data = filtered_data[~filtered_data.apply(lambda row: (row['Player'], row['Squad']) in excluded_players_parsed, axis=1)]
     
     # Apply the filter to exclude selected players
     filtered_data = filtered_data[~filtered_data['Player'].isin(excluded_players)]
