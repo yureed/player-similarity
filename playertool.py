@@ -285,7 +285,7 @@ elif tool_choice == "Scouting Tool":
                                          (int(dataf['Age'].min()), int(dataf['Age'].max())))
 
     selected_template = st.sidebar.selectbox('Select Template', list(templates.keys()))
-    selected_columns = list(set(st.sidebar.multiselect('Select Columns', available_columns, default=templates[selected_template])))
+    selected_columns = list(set(st.sidebar.multiselect('Select Columns', selected_columns, default=templates[selected_template])))
 
     # Add weights for each selected column, ensuring no duplicates
     weights = {}
