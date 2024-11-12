@@ -361,10 +361,6 @@ elif tool_choice == "Scouting Tool":
         # Display the plot in Streamlit
         st.pyplot(fig)
     
-    # Initialize session state to store the selected player for pizza plot
-    if 'selected_player_index' not in st.session_state:
-        st.session_state.selected_player_index = None
-    
     # Display Top Players
     if st.sidebar.button('Find Top Players'):
         df, sorted_indices, normalized_scores = find_weighted_top_players(
@@ -377,26 +373,20 @@ elif tool_choice == "Scouting Tool":
             # Calculate percentiles for the filtered data
             percentiles = calculate_percentiles(df, selected_columns)
             
-            # Display the top 10 players with buttons for selecting the pizza plot
+            # Display the top 10 players
             for i in range(min(10, len(sorted_indices))):
                 idx = sorted_indices[i]
                 score = normalized_scores[idx]
                 player_name = df.iloc[idx]['Player']
                 player_club = df.iloc[idx]['Squad']
                 st.write(f"{i+1}. {player_name} ({player_club}) - Score: {score:.2f}")
-    
-                # Button to select player for pizza plot
-                if st.button(f"View Pizza Plot for {player_name}", key=f"pizza_{i}"):
-                    # Update the selected player index in session state
-                    st.session_state.selected_player_index = idx
             
-            # Only display the pizza plot if a player is selected
-            if st.session_state.selected_player_index is not None:
-                selected_idx = st.session_state.selected_player_index
-                selected_player_name = df.iloc[selected_idx]['Player']
-                selected_player_club = df.iloc[selected_idx]['Squad']
-                
-                st.write(f"### Pizza Plot for Selected Player: {selected_player_name} ({selected_player_club})")
-                display_pizza_plot(selected_player_name, selected_player_club, df, selected_columns, percentiles)
+            # Automatically display the pizza plot for the top player
+            top_player_idx = sorted_indices[0]
+            top_player_name = df.iloc[top_player_idx]['Player']
+            top_player_club = df.iloc[top_player_idx]['Squad']
+            
+            st.write(f"### Pizza Plot for Top Player: {top_player_name} ({top_player_club})")
+            display_pizza_plot(top_player_name, top_player_club, df, selected_columns, percentiles)
         else:
             st.write("No players found meeting the criteria.")
