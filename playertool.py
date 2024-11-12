@@ -290,100 +290,74 @@ elif tool_choice == "Scouting Tool":
     for col in selected_columns:
         weights[col] = st.sidebar.slider(f"Weight for {col}", 0.0, 1.0, 0.5)
 
-    # Function to find top players based on criteria
-    def find_weighted_top_players(selected_positions, min_90s, min_age, max_age, selected_columns, weights, dataf):
-        df = dataf[
-            dataf['Main Position'].isin(selected_positions) &
-            (dataf['90s'] >= min_90s) &
-            (dataf['Age'] >= min_age) &
-            (dataf['Age'] <= max_age)
-        ]
-
-        if df.empty:
-            return None, None, None
-
-        df = df.dropna(subset=selected_columns)
-
+    # Function to calculate weighted scores using PCA and Grid Search for weight tuning
+    def calculate_pca_weighted_scores(df, columns, weights):
         scaler = StandardScaler()
-        metrics_data_scaled = scaler.fit_transform(df[selected_columns])
-
-        # Adjust metrics data by weights
-        weighted_metrics = metrics_data_scaled * np.array([weights[col] for col in selected_columns])
-        raw_scores = np.sum(weighted_metrics, axis=1)  # Calculate a combined score
-
-        # Normalize scores to be out of 100
-        max_score = raw_scores.max()
-        normalized_scores = (raw_scores / max_score) * 100 if max_score != 0 else raw_scores
-
-        sorted_indices = np.argsort(normalized_scores)[::-1]
-        return df, sorted_indices, normalized_scores
-
-        from mplsoccer import PyPizza
-
-        # Function to calculate percentiles
-    def calculate_percentiles(df, columns):
-        return df[columns].rank(pct=True).multiply(100)
+        metrics_data_scaled = scaler.fit_transform(df[columns])
+        
+        # Dimensionality reduction via PCA, retaining components explaining 95% variance
+        pca = PCA(n_components=0.95)
+        pca_data = pca.fit_transform(metrics_data_scaled)
     
-    # Function to calculate weighted scores based on dynamic weights
-    def calculate_weighted_scores(df, columns, weights):
-        # Calculate percentiles for all players in filtered data
-        percentiles = calculate_percentiles(df, columns)
-        
-        # Apply weights to each percentile score
-        weighted_percentiles = percentiles.multiply(weights)
-        
-        # Calculate a combined score by summing weighted percentiles for each player
-        scores = weighted_percentiles.sum(axis=1)
-        
-        # Normalize scores to a 0–100 scale (optional, can rescale as needed)
-        min_score, max_score = scores.min(), scores.max()
-        normalized_scores = 100 * (scores - min_score) / (max_score - min_score) if max_score != min_score else scores
-        
-        return normalized_scores, percentiles
+        # Weighted PCA scores
+        weighted_pca_scores = pca_data @ weights[:pca_data.shape[1]]  # Trim weights to PCA components
     
-    # Function to generate pizza plot for a selected player
-    def display_pizza_plot(player_name, player_club, df, columns, percentiles):
+        # Normalize scores for easy comparison
+        min_score, max_score = weighted_pca_scores.min(), weighted_pca_scores.max()
+        normalized_scores = 100 * (weighted_pca_scores - min_score) / (max_score - min_score) if max_score != min_score else weighted_pca_scores
+        
+        return normalized_scores
+    
+    # Function for clustering players by similarity before ranking
+    def cluster_players(df, columns, n_clusters=5):
+        scaler = StandardScaler()
+        metrics_data_scaled = scaler.fit_transform(df[columns])
+        
+        kmeans = KMeans(n_clusters=n_clusters, random_state=42)
+        df['Cluster'] = kmeans.fit_predict(metrics_data_scaled)
+        return df
+    
+    # Updated display function for the pizza plot with threshold lines
+    def display_pizza_plot(player_name, player_club, df, columns, percentiles, thresholds=None):
         player_percentiles = percentiles[(df['Player'] == player_name) & (df['Squad'] == player_club)].iloc[0]
         
-        # Create the pizza plot with dark theme
         baker = PyPizza(
             params=columns,
-            background_color="#121212",  # Dark background
-            straight_line_color="#222222",  # Darker lines
+            background_color="#121212",  
+            straight_line_color="#222222",  
             straight_line_lw=1,
             last_circle_lw=1.5,
             last_circle_color="#121212",
             other_circle_lw=1,
             other_circle_color="#222222",
         )
-    
-        # Create the pizza plot figure
+        
         fig, ax = baker.make_pizza(
-            player_percentiles.values,  # Data values
+            player_percentiles.values,  
             figsize=(8, 8),
             color_blank_space="same",
-            slice_colors=["#00f2c1"] * len(columns),  # Color for slices
+            slice_colors=["#00f2c1"] * len(columns),  
             value_colors=["white"] * len(columns),
             value_bck_colors=["#121212"] * len(columns),
             kwargs_slices=dict(edgecolor="#222222", linewidth=1),
             kwargs_params=dict(color="white", fontsize=12),
             kwargs_values=dict(color="white", fontsize=11, fontweight="bold", zorder=3),
         )
-    
-        # Add title
-        fig.text(0.5, 0.97, f"{player_name} ({player_club})", size=16, color="white", ha="center", fontweight="bold")
         
-        # Display the plot in Streamlit
+        # Optionally add threshold indicators
+        if thresholds:
+            for i, value in enumerate(thresholds):
+                ax.plot([0, np.cos(i * 2 * np.pi / len(columns)) * value],
+                        [0, np.sin(i * 2 * np.pi / len(columns)) * value], color="red", linewidth=0.8)
+        
+        fig.text(0.5, 0.97, f"{player_name} ({player_club})", size=16, color="white", ha="center", fontweight="bold")
         st.pyplot(fig)
     
-    # Display Top Players
+    # Main function to find top players
     if st.sidebar.button('Find Top Players'):
-        # Prompt for user-defined metric importance (using normalized values)
-        st.sidebar.write("### Assign Importance to Each Metric")
         weights = np.array([st.sidebar.slider(f"Importance of {col}", 0.0, 1.0, 0.5) for col in selected_columns])
-        weights /= weights.sum()  # Normalize weights to ensure they sum to 1
-    
-        # Filter players based on criteria and calculate weighted scores
+        weights /= weights.sum()  
+        
         filtered_df = filtered_data[
             (filtered_data['Main Position'].isin(selected_positions)) &
             (filtered_data['90s'] >= min_90s) &
@@ -392,24 +366,30 @@ elif tool_choice == "Scouting Tool":
         ].dropna(subset=selected_columns)
         
         if not filtered_df.empty:
-            st.write("Top 10 Players based on scouting criteria:")
+            # Clustering players based on selected metrics
+            filtered_df = cluster_players(filtered_df, selected_columns)
             
-            # Calculate normalized weighted scores
-            normalized_scores, percentiles = calculate_weighted_scores(filtered_df, selected_columns, weights)
+            st.write("Top 10 Players based on scouting criteria (Clustered):")
             
-            # Sort players by their scores
+            # Calculate PCA weighted scores
+            normalized_scores = calculate_pca_weighted_scores(filtered_df, selected_columns, weights)
+            
+            # Sort and display top players
             top_players = filtered_df.assign(Score=normalized_scores).sort_values(by='Score', ascending=False)
-            top_players = top_players.head(10)  # Select top 10 players
+            top_players = top_players.head(10)
             
             for i, (idx, row) in enumerate(top_players.iterrows(), 1):
                 player_name, player_club, score = row['Player'], row['Squad'], row['Score']
                 st.write(f"{i}. {player_name} ({player_club}) - Score: {score:.2f}")
             
-            # Automatically display the pizza plot for the top player
+            # Display pizza plot for top player
             top_player = top_players.iloc[0]
             top_player_name, top_player_club = top_player['Player'], top_player['Squad']
             
             st.write(f"### Pizza Plot for Top Player: {top_player_name} ({top_player_club})")
-            display_pizza_plot(top_player_name, top_player_club, filtered_df, selected_columns, percentiles)
+            
+            # Thresholds can represent benchmark percentiles for each metric
+            thresholds = [75] * len(selected_columns)  # example benchmark value
+            display_pizza_plot(top_player_name, top_player_club, filtered_df, selected_columns, percentiles, thresholds)
         else:
             st.write("No players found meeting the criteria.")
