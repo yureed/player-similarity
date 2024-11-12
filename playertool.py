@@ -322,12 +322,27 @@ elif tool_choice == "Scouting Tool":
 
         # Function to calculate percentiles
     def calculate_percentiles(df, columns):
-        percentiles = df[columns].rank(pct=True).multiply(100).round(1)
-        return percentiles
+        return df[columns].rank(pct=True).multiply(100)
+    
+    # Function to calculate weighted scores based on dynamic weights
+    def calculate_weighted_scores(df, columns, weights):
+        # Calculate percentiles for all players in filtered data
+        percentiles = calculate_percentiles(df, columns)
+        
+        # Apply weights to each percentile score
+        weighted_percentiles = percentiles.multiply(weights)
+        
+        # Calculate a combined score by summing weighted percentiles for each player
+        scores = weighted_percentiles.sum(axis=1)
+        
+        # Normalize scores to a 0–100 scale (optional, can rescale as needed)
+        min_score, max_score = scores.min(), scores.max()
+        normalized_scores = 100 * (scores - min_score) / (max_score - min_score) if max_score != min_score else scores
+        
+        return normalized_scores, percentiles
     
     # Function to generate pizza plot for a selected player
     def display_pizza_plot(player_name, player_club, df, columns, percentiles):
-        player_data = df[(df['Player'] == player_name) & (df['Squad'] == player_club)].iloc[0]
         player_percentiles = percentiles[(df['Player'] == player_name) & (df['Squad'] == player_club)].iloc[0]
         
         # Create the pizza plot with dark theme
@@ -363,30 +378,38 @@ elif tool_choice == "Scouting Tool":
     
     # Display Top Players
     if st.sidebar.button('Find Top Players'):
-        df, sorted_indices, normalized_scores = find_weighted_top_players(
-            selected_positions, min_90s, min_age, max_age, selected_columns, weights, filtered_data
-        )
+        # Prompt for user-defined metric importance (using normalized values)
+        st.sidebar.write("### Assign Importance to Each Metric")
+        weights = np.array([st.sidebar.slider(f"Importance of {col}", 0.0, 1.0, 0.5) for col in selected_columns])
+        weights /= weights.sum()  # Normalize weights to ensure they sum to 1
+    
+        # Filter players based on criteria and calculate weighted scores
+        filtered_df = filtered_data[
+            (filtered_data['Main Position'].isin(selected_positions)) &
+            (filtered_data['90s'] >= min_90s) &
+            (filtered_data['Age'] >= min_age) & 
+            (filtered_data['Age'] <= max_age)
+        ].dropna(subset=selected_columns)
         
-        if sorted_indices is not None:
+        if not filtered_df.empty:
             st.write("Top 10 Players based on scouting criteria:")
             
-            # Calculate percentiles for the filtered data
-            percentiles = calculate_percentiles(df, selected_columns)
+            # Calculate normalized weighted scores
+            normalized_scores, percentiles = calculate_weighted_scores(filtered_df, selected_columns, weights)
             
-            # Display the top 10 players
-            for i in range(min(10, len(sorted_indices))):
-                idx = sorted_indices[i]
-                score = normalized_scores[idx]
-                player_name = df.iloc[idx]['Player']
-                player_club = df.iloc[idx]['Squad']
-                st.write(f"{i+1}. {player_name} ({player_club}) - Score: {score:.2f}")
+            # Sort players by their scores
+            top_players = filtered_df.assign(Score=normalized_scores).sort_values(by='Score', ascending=False)
+            top_players = top_players.head(10)  # Select top 10 players
+            
+            for i, (idx, row) in enumerate(top_players.iterrows(), 1):
+                player_name, player_club, score = row['Player'], row['Squad'], row['Score']
+                st.write(f"{i}. {player_name} ({player_club}) - Score: {score:.2f}")
             
             # Automatically display the pizza plot for the top player
-            top_player_idx = sorted_indices[0]
-            top_player_name = df.iloc[top_player_idx]['Player']
-            top_player_club = df.iloc[top_player_idx]['Squad']
+            top_player = top_players.iloc[0]
+            top_player_name, top_player_club = top_player['Player'], top_player['Squad']
             
             st.write(f"### Pizza Plot for Top Player: {top_player_name} ({top_player_club})")
-            display_pizza_plot(top_player_name, top_player_club, df, selected_columns, percentiles)
+            display_pizza_plot(top_player_name, top_player_club, filtered_df, selected_columns, percentiles)
         else:
-            st.write("No players found meeting the criteria.")
+        st.write("No players found meeting the criteria.")
