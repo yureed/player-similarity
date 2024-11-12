@@ -174,6 +174,11 @@ if tool_choice == "Similarity Checker":
         filtered_data = dataf
     else:
         filtered_data = dataf[dataf['Comp'].isin(selected_competitions)]
+    all_players = dataf['Player'].unique().tolist()  # List of all players
+    excluded_players = st.sidebar.multiselect("Exclude Players", all_players, default=[])
+    
+    # Apply the filter to exclude selected players
+    filtered_data = filtered_data[~filtered_data['Player'].isin(excluded_players)]
 
     # Filtering based on 'Main Position' and user selections
     positions = dataf['Main Position'].unique().tolist()
@@ -279,6 +284,11 @@ elif tool_choice == "Scouting Tool":
         filtered_data = dataf
     else:
         filtered_data = dataf[dataf['Comp'].isin(selected_competitions)]
+    all_players = dataf['Player'].unique().tolist()  # List of all players
+    excluded_players = st.sidebar.multiselect("Exclude Players", all_players, default=[])
+    
+    # Apply the filter to exclude selected players
+    filtered_data = filtered_data[~filtered_data['Player'].isin(excluded_players)]
 
     # Filtering based on 'Main Position' and user selections
     positions = dataf['Main Position'].unique().tolist()
@@ -375,9 +385,13 @@ elif tool_choice == "Scouting Tool":
             value_colors=["white"] * len(short_columns),
             value_bck_colors=["#121212"] * len(short_columns),
             kwargs_slices=dict(edgecolor="#222222", linewidth=1),
-            kwargs_params=dict(color="white", fontsize=font_size, rotation=45),  # Rotate labels if needed
+            kwargs_params=dict(color="white", fontsize=font_size),  # Removed rotation here
             kwargs_values=dict(color="white", fontsize=11, fontweight="bold", zorder=3),
         )
+        
+        # Adjust label rotation separately
+        for text in ax.texts:
+            text.set_rotation(45)
         
         # Display player name and club at the top
         fig.text(0.5, 0.97, f"{player_name} ({player_club})", size=16, color="white", ha="center", fontweight="bold")
