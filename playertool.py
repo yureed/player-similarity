@@ -4,6 +4,9 @@ import streamlit as st
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import StandardScaler
 import ftfy
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.decomposition import PCA
+from sklearn.cluster import KMeans
 from mplsoccer import Radar, grid
 from mplsoccer import PyPizza
 from mplsoccer.utils import FontManager
