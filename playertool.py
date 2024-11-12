@@ -242,6 +242,7 @@ if tool_choice == "Similarity Checker":
             # Calculate min and max for selected columns
             low = [df[col].min() for col in selected_columns]
             high = [df[col].max() for col in selected_columns]
+            most_similar_player_metrics = df.iloc[most_similar_player_index][selected_columns].values
 
             # Radar chart setup
             radar = Radar(params, low, high,
@@ -255,7 +256,7 @@ if tool_choice == "Similarity Checker":
 
             radar.setup_axis(ax=axs['radar'], facecolor='black')
             rings_inner = radar.draw_circles(ax=axs['radar'], facecolor='orange', edgecolor='black')
-            radar_output = radar.draw_radar(top_player_metrics, ax=axs['radar'],
+            radar_output = radar.draw_radar(most_similar_player_metrics, ax=axs['radar'],
                                             kwargs_radar={'facecolor': '#00f2c1', 'alpha': 0.6})
 
             range_labels = radar.draw_range_labels(ax=axs['radar'], fontsize=23, color='white')
@@ -287,16 +288,15 @@ elif tool_choice == "Scouting Tool":
     selected_template = st.sidebar.selectbox('Select Template', list(templates.keys()))
     selected_columns = list(set(st.sidebar.multiselect('Select Columns', selected_columns, default=templates[selected_template])))
 
-    # Add weights for each selected column, ensuring no duplicates
+    # Assign weights for each selected column once outside the 'Find Top Players' button click
     weights = {}
     st.sidebar.write("### Assign weights to each metric")
-    
-    # Avoid re-adding sliders when columns change
     for col in selected_columns:
         if col not in weights:
             weights[col] = st.sidebar.slider(f"Weight for {col}", 0.0, 1.0, 0.5)
+
     def calculate_percentiles(df, columns):
-        return df[columns].rank(pct=True).multiply(100)
+        return df[columns].rank(pct=True).multiply(100).round()  # Added rounding here
 
     # Function to calculate weighted scores using PCA and Grid Search for weight tuning
     def calculate_pca_weighted_scores(df, columns, weights):
@@ -327,7 +327,7 @@ elif tool_choice == "Scouting Tool":
     
     # Updated display function for the pizza plot with threshold lines
     def display_pizza_plot(player_name, player_club, df, columns, percentiles, thresholds=None):
-        player_percentiles = percentiles[(df['Player'] == player_name) & (df['Squad'] == player_club)].iloc[0]
+        player_percentiles = percentiles[(df['Player'] == player_name) & (df['Squad'] == player_club)].iloc[0].round()  # Rounding percentiles here
         
         baker = PyPizza(
             params=columns,
@@ -352,15 +352,13 @@ elif tool_choice == "Scouting Tool":
             kwargs_values=dict(color="white", fontsize=11, fontweight="bold", zorder=3),
         )
         
-
-        
         fig.text(0.5, 0.97, f"{player_name} ({player_club})", size=16, color="white", ha="center", fontweight="bold")
         st.pyplot(fig)
     
     # Main function to find top players
     if st.sidebar.button('Find Top Players'):
-        weights = np.array([st.sidebar.slider(f"Importance of {col}", 0.0, 1.0, 0.5) for col in selected_columns])
-        weights /= weights.sum()  
+        weights_array = np.array([weights[col] for col in selected_columns])  # Get slider values once, avoiding duplicates
+        weights_array /= weights_array.sum()  
         
         filtered_df = filtered_data[
             (filtered_data['Main Position'].isin(selected_positions)) &
@@ -379,7 +377,7 @@ elif tool_choice == "Scouting Tool":
             st.write("Top 10 Players based on scouting criteria (Clustered):")
             
             # Calculate PCA weighted scores
-            normalized_scores = calculate_pca_weighted_scores(filtered_df, selected_columns, weights)
+            normalized_scores = calculate_pca_weighted_scores(filtered_df, selected_columns, weights_array)
             
             # Sort and display top players
             top_players = filtered_df.assign(Score=normalized_scores).sort_values(by='Score', ascending=False)
