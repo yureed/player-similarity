@@ -412,4 +412,4 @@ elif tool_choice == "Scouting Tool":
             st.write(f"### Pizza Plot for Top Player: {top_player_name} ({top_player_club})")
             display_pizza_plot(top_player_name, top_player_club, filtered_df, selected_columns, percentiles)
         else:
-        st.write("No players found meeting the criteria.")
+            st.write("No players found meeting the criteria.")
