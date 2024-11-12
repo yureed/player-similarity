@@ -285,15 +285,16 @@ elif tool_choice == "Scouting Tool":
                                          (int(dataf['Age'].min()), int(dataf['Age'].max())))
 
     selected_template = st.sidebar.selectbox('Select Template', list(templates.keys()))
-    selected_columns = st.sidebar.multiselect('Select Columns', selected_columns, default=templates[selected_template])
+    selected_columns = list(set(st.sidebar.multiselect('Select Columns', available_columns, default=templates[selected_template])))
 
-    # Add weights for each selected column
+    # Add weights for each selected column, ensuring no duplicates
     weights = {}
     st.sidebar.write("### Assign weights to each metric")
+    
+    # Avoid re-adding sliders when columns change
     for col in selected_columns:
-        weights[col] = st.sidebar.slider(f"Weight for {col}", 0.0, 1.0, 0.5)
-    def calculate_percentiles(df, columns):
-        return df[columns].rank(pct=True).multiply(100)
+        if col not in weights:
+            weights[col] = st.sidebar.slider(f"Weight for {col}", 0.0, 1.0, 0.5)
 
     # Function to calculate weighted scores using PCA and Grid Search for weight tuning
     def calculate_pca_weighted_scores(df, columns, weights):
