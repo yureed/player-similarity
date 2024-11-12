@@ -255,31 +255,54 @@ if tool_choice == "Similarity Checker":
             # Calculate min and max for selected columns
             low = [df[col].min() for col in selected_columns]
             high = [df[col].max() for col in selected_columns]
-            most_similar_player_metrics = df.iloc[most_similar_player_index][selected_columns].values
-
+            selected_player_metrics = filtered_data[(filtered_data['Player'] == player_name) & 
+                                        (filtered_data['Squad'] == player_club)][selected_columns].values.flatten()
+            most_similar_player_metrics = df.iloc[most_similar_player_index][selected_columns].values.flatten()
+            
             # Radar chart setup
-            radar = Radar(params, low, high,
-                          lower_is_better=[],
-                          round_int=[False] * len(params),
-                          num_rings=4,
-                          ring_width=1, center_circle_radius=1)
-
+            radar = Radar(params, low, high, lower_is_better=[],
+                          round_int=[False] * len(params), num_rings=4, ring_width=1, center_circle_radius=1)
+            
+            # Create figure with dark theme
             fig, axs = grid(figheight=14, grid_height=0.915, title_height=0.06, endnote_height=0.025,
                             title_space=0, endnote_space=0, grid_key='radar', axis=False)
-
-            radar.setup_axis(ax=axs['radar'], facecolor='black')
-            rings_inner = radar.draw_circles(ax=axs['radar'], facecolor='orange', edgecolor='black')
-            radar_output = radar.draw_radar(most_similar_player_metrics, ax=axs['radar'],
-                                            kwargs_radar={'facecolor': '#00f2c1', 'alpha': 0.6})
-
+            
+            # Plot radar chart
+            radar.setup_axis(ax=axs['radar'], facecolor='#121212')  # Dark background
+            rings_inner = radar.draw_circles(ax=axs['radar'], facecolor='#ffb2b2', edgecolor='#fc5f5f')
+            
+            # Draw radar comparison between the two players
+            radar_output = radar.draw_radar_compare(
+                selected_player_metrics, most_similar_player_metrics, ax=axs['radar'],
+                kwargs_radar={'facecolor': '#00f2c1', 'alpha': 0.6},  # Selected player color
+                kwargs_compare={'facecolor': '#d80499', 'alpha': 0.6}  # Most similar player color
+            )
+            radar_poly, radar_poly2, vertices1, vertices2 = radar_output
+            
+            # Scatter points on radar
+            axs['radar'].scatter(vertices1[:, 0], vertices1[:, 1], c='#00f2c1', edgecolors='#6d6c6d', marker='o', s=150, zorder=2)
+            axs['radar'].scatter(vertices2[:, 0], vertices2[:, 1], c='#d80499', edgecolors='#6d6c6d', marker='o', s=150, zorder=2)
+            
+            # Draw range and parameter labels with custom font and color
             range_labels = radar.draw_range_labels(ax=axs['radar'], fontsize=23, color='white')
             param_labels = radar.draw_param_labels(ax=axs['radar'], fontsize=25, color='white')
-
-            title_text = axs['title'].text(0.5, 0.5, f"{most_similar_player_score} ({most_similar_player_club})", fontsize=25,
-                                           fontproperties=robotto_bold.prop, color='white',
-                                           ha='center', va='center')
-            fig.set_facecolor('#121212')
-
+            
+            # Adding title text for each player
+            title1_text = axs['title'].text(0.01, 0.65, f"{player_name}", fontsize=25, color='#00f2c1',
+                                            ha='left', va='center', fontweight='bold')
+            title2_text = axs['title'].text(0.01, 0.25, f"{player_club}", fontsize=20, color='#00f2c1',
+                                            ha='left', va='center')
+            title3_text = axs['title'].text(0.99, 0.65, f"{most_similar_player_name}", fontsize=25,
+                                            ha='right', va='center', color='#d80499', fontweight='bold')
+            title4_text = axs['title'].text(0.99, 0.25, f"{most_similar_player_club}", fontsize=20,
+                                            ha='right', va='center', color='#d80499')
+            
+            # Adding an endnote (optional)
+            endnote_text = axs['endnote'].text(0.99, 0.5, 'Inspired By: StatsBomb / Rami Moghadam', fontsize=15,
+                                               ha='right', va='center', color='white')
+            
+            fig.set_facecolor('#121212')  # Set the figure background to dark
+            
             st.pyplot(fig)
 elif tool_choice == "Scouting Tool":
     # Filters and options for Scouting Tool
