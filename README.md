@@ -23,4 +23,4 @@ Stay updated and follow my work:
 
 ## Getting Started
 
-The code has been provided for you. Meanwhile, the data is being accessed from my private Google Sheets. If you need help building this, I am happy to assist. Do mention me if you cite my dashboard.
+The code has been provided for you. Meanwhile, the data is stored right in this repository if you need it. Credit to [BenGriffis](https://x.com/BeGriffis) whose code I used to scrape the FBRef data. If you need help building this, I am happy to assist. Do mention me if you cite my dashboard.
