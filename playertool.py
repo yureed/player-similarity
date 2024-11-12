@@ -5,6 +5,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import StandardScaler
 import ftfy
 from mplsoccer import Radar, grid
+from mplsoccer import PyPizza
 from mplsoccer.utils import FontManager
 
 # Load custom fonts for radar chart
