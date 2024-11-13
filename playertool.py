@@ -122,7 +122,7 @@ if tool_choice == "Similarity Checker":
 
 
     positions = dataf['Main Position'].unique().tolist()
-    selected_positions = st.sidebar.multiselect('Select Positions', positions, default=positions)
+    selected_positions = st.sidebar.multiselect('Select Positions (Main Position)', positions, default=positions)
     
     min_90s = st.sidebar.slider('Minimum 90s played', int(dataf['90s'].min()), int(dataf['90s'].max()), int(dataf['90s'].min()))
     min_age, max_age = st.sidebar.slider('Age Range', int(dataf['Age'].min()), int(dataf['Age'].max()),
@@ -257,7 +257,7 @@ elif tool_choice == "Scouting Tool":
     filtered_data = filtered_data[~filtered_data['Player'].isin(excluded_players)]
 
     positions = dataf['Main Position'].unique().tolist()
-    selected_positions = st.sidebar.multiselect('Select Positions', positions, default=positions)
+    selected_positions = st.sidebar.multiselect('Select Positions (Main Position)', positions, default=positions)
     min_90s = st.sidebar.slider('Minimum 90s played', int(dataf['90s'].min()), int(dataf['90s'].max()), int(dataf['90s'].min()))
     min_age, max_age = st.sidebar.slider('Age Range', int(dataf['Age'].min()), int(dataf['Age'].max()),
                                          (int(dataf['Age'].min()), int(dataf['Age'].max())))
