@@ -165,6 +165,9 @@ if tool_choice == "Similarity Checker":
 
 
     if st.sidebar.button('Find Similar Players'):
+        st.write(f"Selected Player: {player_name} ({player_club})")
+        st.write(f"Stats for Selected Columns: {filtered_data[(filtered_data['Player'] == player_name) & (filtered_data['Squad'] == player_club)][selected_columns]}")
+
         df, similar_players_indices, similarity_scores = find_similar_players(
             player_name, player_club, selected_positions, min_90s, min_age, max_age, selected_columns, filtered_data
         )
